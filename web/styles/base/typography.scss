@@ -1,0 +1,63 @@
+// load custom fonts
+@font-face {
+    font-family: 'Londrina Solid';
+    src: url(/static/fonts/Londrina_Solid/LondrinaSolid-Black.ttf);
+    src: url(/static/fonts/Londrina_Solid/LondrinaSolid-Regular.ttf);
+}
+html {
+    font-size: 94.5%;
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+}
+body {
+    font-size: 1rem;
+    line-height: 1.55;
+    font-family: system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Fira Sans','Droid Sans','Helvetica Neue',sans-serif;
+    color: #0d0c1d;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: auto;
+    -moz-text-size-adjust: auto;
+    -ms-text-size-adjust: auto;
+    text-size-adjust: auto;
+}
+::placeholder {
+    color: #000;
+    opacity: .33;
+    position: relative;
+}
+h1 {
+    font-size: 1.35rem;
+}
+h2 {
+    font-size: 1rem;
+    font-weight: normal;
+}
+a {
+    text-decoration: underline;
+}
+p.type {
+    font-size: 1.26rem;
+}
+.small {
+    font-size: 87%;
+}
+h1, h2, h3, h4, h5 {
+    margin: 0;
+}
+
+// Extra small devices only (portrait phones, less than 576px)
+@include media-breakpoint-down(xs) {}
+
+// Small devices (landscape phones, 576px and up)
+@include media-breakpoint-up(sm) {}
+
+// Medium devices (tablets, 768px and up)
+@include media-breakpoint-up(md) {}
+
+// Large devices (desktops, 992px and up)
+@include media-breakpoint-up(lg) {}
+
+// Extra large devices (large desktops, 1200px and up)
+@include media-breakpoint-up(xl) {}

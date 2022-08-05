@@ -1,0 +1,21 @@
+@import "base/base.scss";
+@import "base/bootstrap.scss";
+@import "base/typography.scss";
+
+body {
+    margin: 0;
+    background: #fafafa;
+    overscroll-behavior-y: none;
+}
+
+body, html {
+    height: 100%;
+}
+
+#__next {
+    height: 100%;
+}
+
+.n {
+    font-family: 'Londrina Solid';
+}
