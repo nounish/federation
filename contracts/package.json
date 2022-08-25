@@ -1,0 +1,21 @@
+{
+  "name": "contracts",
+  "author": "wiz",
+  "version": "0.1",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx hardhat compile",
+    "test": "npx hardhat test --verbose",
+    "coverage": "npx hardhat coverage",
+    "connect-local": "npx hardhat console --network localhost",
+    "connect-mainnet": "npx hardhat console --network mainnet",
+    "expose-node": "npx hardhat node --hostname 0.0.0.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "hardhat": "^2.10.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3"
+  }
+}

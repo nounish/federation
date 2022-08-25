@@ -1,0 +1,19 @@
+tmp
+node_modules
+.env
+coverage
+coverage.json
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts
+abi/contracts
+
+# Script output
+logs
+
+# Coverage result files
+coverage/
+coverage.json

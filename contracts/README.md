@@ -1,1 +1,1 @@
-# federation smart contracts
+# federation contracts
