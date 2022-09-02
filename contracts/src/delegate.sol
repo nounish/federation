@@ -2,9 +2,10 @@
 
 /// @title Federation Delegate
 
+import "@openzeppelin/contracts/utils/Strings.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {NounsTokenLike, NounsDAOStorageV1} from "./external/nouns/governance/NounsDAOInterfaces.sol";
 import "./federation.sol";
-import "./external/nouns/NounsDAOInterfaces.sol";
 
 pragma solidity ^0.8.16;
 
@@ -38,7 +39,7 @@ contract Delegate is DelegateEvents {
      * @param ownerDAO_ The address of the external Nounish DAO
      * @param execWindow_ The window in blocks that a proposal which has met quorum can be executed
      */
-    constructor(address nounishToken_, NounsDAOStorageV1 ownerDAO_, uint256 execWindow_) {
+    constructor(address _vetoer, address nounishToken_, NounsDAOStorageV1 ownerDAO_, uint256 execWindow_) {
         require(
             address(ownerDAO_) != address(0),
             "invalid owner dao address"
@@ -52,6 +53,15 @@ contract Delegate is DelegateEvents {
         nounishToken = NounsTokenLike(nounishToken_);
         ownerDAO = ownerDAO_;
         execWindow = execWindow_;
+        vetoer = _vetoer;
+    }
+
+    function _externalProposal(NounsDAOStorageV1 eDAO, uint256 ePropID) public view returns (uint256) {
+        (,,,,,, uint256 ePropEndBlock,,,,,,) = eDAO.proposals(
+            ePropID
+        );
+
+        return ePropEndBlock;
     }
 
     /**
@@ -69,16 +79,32 @@ contract Delegate is DelegateEvents {
         );
 
         // this delegate must have representation before voting can be started
-        require(eDAO.nouns().getPriorVotes(address(this), block.number - 1) > 0);
+        try eDAO.nouns().getPriorVotes(address(this), block.number - 1) returns (uint96 votes) {
+            require(votes > 0, "delegate does not have external dao representation");   
+        } catch(bytes memory) {
+            revert("checking delegate representation on external dao failed");
+        }        
 
-        (,,,,,, uint256 ePropEndBlock,,,,,,) = eDAO.proposals(
-            ePropID
-        );
+        // check when external proposal ends
+        uint256 ePropEndBlock;
+        try this._externalProposal(eDAO, ePropID) returns (uint256 endBlock) {
+            ePropEndBlock = endBlock;
+        } catch(bytes memory) {
+            revert(
+                string.concat("invalid external proposal id: ", 
+                    Strings.toString(ePropID), 
+                    " for external dao: ", 
+                    Strings.toHexString(address(eDAO))
+                )
+            );
+        }
+
+        require(ePropEndBlock > block.number, "external proposal has already ended or does not exist");
 
         proposalCount++;
-        
         DelegateAction storage newProposal = proposals[proposalCount];
         newProposal.id = proposalCount;
+
         newProposal.eID = ePropID;
         newProposal.eDAO = address(eDAO);
         newProposal.proposer = msg.sender;
@@ -93,7 +119,6 @@ contract Delegate is DelegateEvents {
         newProposal.forVotes = 0;
         newProposal.againstVotes = 0;
         newProposal.abstainVotes = 0;
-        newProposal.canceled = false;
         newProposal.executed = false;
         newProposal.vetoed = false;
 
@@ -137,7 +162,9 @@ contract Delegate is DelegateEvents {
             "proposal can only be executed if it is within the execution window"
         );
 
+        // untrusted external calls, don't modify any state after this point
         // support values 0=against, 1=for, 2=abstain
+
         INounsDAOGovernance eDAO = INounsDAOGovernance(proposal.eDAO);
         if (r == ProposalResult.For) {
             eDAO.castVote(proposal.eID, 1);
@@ -156,7 +183,7 @@ contract Delegate is DelegateEvents {
      */
     function veto(uint256 proposalId) external {
         require(vetoer != address(0), "veto power burned");
-
+        
         require(msg.sender == vetoer, "caller not vetoer");
         
         require(
@@ -248,14 +275,12 @@ contract Delegate is DelegateEvents {
      * @return Proposal state
      */
     function state(uint256 proposalId) public view returns (ProposalState) {
-        require(proposalCount >= proposalId, "invalid proposal id");
+        require(proposalCount >= proposalId, "proposal not found");
 
         DelegateAction storage proposal = proposals[proposalId];
 
         if (proposal.vetoed) {
             return ProposalState.Vetoed;
-        } else if (proposal.canceled) {
-            return ProposalState.Canceled;
         } else if (proposal.executed) {
             return ProposalState.Executed;
         } else if (block.number > proposal.endBlock) {
@@ -305,6 +330,15 @@ contract Delegate is DelegateEvents {
         emit NewExecWindow(execWindow, newExecWindow);
 
         execWindow = newExecWindow;
+    }
+
+    /**
+     * @notice Burns veto priviledges
+     * @dev Vetoer function destroying veto power forever
+     */
+    function _burnVetoPower() public {
+        require(msg.sender == vetoer, "vetoer only");
+        _setVetoer(address(0));
     }
 
     /**
