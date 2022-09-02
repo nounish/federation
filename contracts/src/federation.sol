@@ -9,16 +9,15 @@
 //
 // https://github.com/nounsDAO/nouns-monorepo/blob/master/packages/nouns-contracts/contracts/governance
 
-// Built by wiz ⌐◨-◨
+// Built by wiz ⌐◨-◨ ☆ﾟ. * ･ ｡ﾟ
 
 pragma solidity ^0.8.16;
 
-import "./external/nouns/NounsDAOInterfaces.sol";
+import {NounsDAOStorageV1} from "./external/nouns/governance/NounsDAOInterfaces.sol";
 
 /// @notice All possible states that a proposal may be in
 enum ProposalState {
     Active,
-    Canceled,
     Expired,
     Executed,
     Vetoed
@@ -55,8 +54,6 @@ struct DelegateAction {
     uint256 againstVotes;
     /// @notice Current number of votes for abstaining for this proposal
     uint256 abstainVotes;
-    /// @notice Flag marking whether the proposal has been canceled
-    bool canceled;
     /// @notice Flag marking whether the proposal has been vetoed
     bool vetoed;
     /// @notice Flag marking whether the proposal has been executed
@@ -76,14 +73,6 @@ struct Receipt {
 }
 
 contract DelegateEvents {
-    /// @notice An event emitted when a new proposal is created
-    event ProposalCreated(
-        uint256 id,
-        address proposer,
-        uint256 startBlock,
-        uint256 endBlock
-    );
-
     event ProposalCreated(
         uint256 id,
         address proposer,
@@ -107,9 +96,6 @@ contract DelegateEvents {
         uint256 votes,
         string reason
     );
-
-    /// @notice An event emitted when a proposal has been canceled
-    event ProposalCanceled(uint256 id);
 
     /// @notice An event emitted when a proposal has been executed in the NounsDAOExecutor
     event ProposalExecuted(uint256 id);
