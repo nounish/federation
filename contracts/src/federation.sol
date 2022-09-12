@@ -53,7 +53,7 @@ struct DelegateAction {
     /// @notice Current number of votes in opposition to this proposal
     uint256 againstVotes;
     /// @notice Current number of votes for abstaining for this proposal
-    uint256 abstainVotes;
+    uint256 abstainVotes;    
     /// @notice Flag marking whether the proposal has been vetoed
     bool vetoed;
     /// @notice Flag marking whether the proposal has been executed
@@ -76,8 +76,8 @@ contract DelegateEvents {
     event ProposalCreated(
         uint256 id,
         address proposer,
-        address eDAO,
-        uint256 ePropID,
+        address indexed eDAO,
+        uint256 indexed ePropID,
         uint256 startBlock,
         uint256 endBlock,
         uint256 quorumVotes

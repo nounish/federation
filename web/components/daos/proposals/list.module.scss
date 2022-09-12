@@ -1,0 +1,89 @@
+.mast {
+    margin-bottom: 1.16rem;        
+}
+
+.listFilterBar {
+    padding: 0 1.32rem;
+    display: block;
+    margin-bottom: 0.29rem;
+}
+
+.nn {
+    font-family: "Londrina Solid";
+    font-size: 3.3rem !important;
+}
+
+.pill {
+    display: inline-block;
+    border-radius: 1rem;
+    background: #f0f3f5;
+    padding: 0.33rem 0.66rem;
+    font-weight: 500;
+    opacity: 0.8;
+    transition: opacity 120ms cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.lilnouns {
+    background-color: #2b83f6;
+    color: #fff;
+}
+
+.pill:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+
+.list {
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.list h1 {
+    margin: 0;
+    font-size: 2.32rem !important;
+    font-family: "Londrina Solid";
+}
+
+.list .proposer {
+    display: flex;
+    align-items: center;
+    gap: 0.58rem;
+}
+
+.list .proposer img {
+    width: 24px;
+    height: auto;
+    border-radius: 1rem;
+}
+
+.list h2 {
+    font-size: 2.1945rem;
+    font-weight: bold;
+    margin-bottom: 0.58rem;
+}
+
+.b {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+
+    ul {
+        margin: 0;
+        display: flex;
+        gap: 1.16rem;
+
+        li {
+            list-style: none;
+            font-weight: 500;
+        }
+    }
+
+    a {
+        text-decoration: none;
+        color: #000;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+}

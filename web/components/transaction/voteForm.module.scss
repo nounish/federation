@@ -1,0 +1,187 @@
+.tx {
+    h3 {
+        font-size: 1.4454rem;
+        line-height: 1.4454rem;
+        text-align: center;
+    }
+}
+
+.tip {
+    max-width: 300px;
+    display: block;
+    opacity: .8;
+    margin: 1.16rem 0;
+}
+
+.sb {
+    font-weight: 500;
+}
+
+.txDesc {
+    font-weight: 500;
+    margin-bottom: 1.16rem !important;
+    display: flex !important;
+    align-items: center;
+    border-bottom: 1px solid #f0f3f5;
+}
+
+.meta {
+    margin-top: 1.16rem;
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input {
+        padding: 0.58rem;
+        border-radius: 0.5rem;
+        background: #f3f5f7;
+        outline: 0;
+        border: 0;
+        width: 100%;
+        margin-bottom: 0.58rem;
+    }
+
+    input:last-child {
+        margin-bottom: 0;
+    }
+
+    input::placeholder {
+        color: #000 !important;
+        opacity: .5;
+    }
+}
+
+.modalAction {
+    border-radius: 0.5rem;
+    padding: 0.87rem;
+    background: #f3f5f7;
+    width: 100%;
+    outline: none;
+    border: 0;
+    margin-top: 1.64rem;
+    font-weight: 500;
+    transition: background 120ms cubic-bezier(0.075, 0.82, 0.165, 1), color ease, transform 120ms cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+    }
+}
+
+.confirming:hover {
+    cursor: wait;
+}
+
+.success {
+    background: #5cb85c;
+    color: #fff;
+}
+
+.errorBtn {
+    background: red;
+    color: #fff
+}
+
+.error {
+    color: red;
+    text-align: center;
+    display: block;
+    width: 100%;
+    margin-top: 0.58rem;
+}
+
+// pending indicator
+// modified from https: //codepen.io/scottloway/pen/zqoLyQ
+$brand-success: #5cb85c;
+$loader-size: 15px;
+$check-height: $loader-size/2.15;
+$check-width: $check-height/2;
+$check-left: (
+    $loader-size/6.2
+);
+$check-thickness: 1px;
+$check-color: $brand-success;
+
+.circleLoader {
+    margin-left: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-left-color: $check-color;
+    animation: loader-spin 1.2s infinite linear;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    border-radius: 50%;
+    width: $loader-size;
+    height: $loader-size;
+}
+
+.loadComplete {
+    -webkit-animation: none;
+    animation: none;
+    border-color: $check-color;
+    transition: border 500ms ease-out;
+}
+
+.loadError {}
+
+.checkmark {
+    display: none;
+
+    &:after {
+        opacity: 1;
+        height: $check-height;
+        width: $check-width;
+        transform-origin: left top;
+        border-right: $check-thickness solid $check-color;
+        border-top: $check-thickness solid $check-color;
+        content: '';
+        left: $check-left;
+        top: $check-height;
+        position: absolute;
+    }
+}
+
+.draw:after {
+    animation-duration: 800ms;
+    animation-timing-function: ease;
+    animation-name: checkmark;
+    transform: scaleX(-1) rotate(135deg);
+}
+
+@keyframes loader-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes checkmark {
+    0% {
+        height: 0;
+        width: 0;
+        opacity: 1;
+    }
+
+    20% {
+        height: 0;
+        width: $check-width;
+        opacity: 1;
+    }
+
+    40% {
+        height: $check-height;
+        width: $check-width;
+        opacity: 1;
+    }
+
+    100% {
+        height: $check-height;
+        width: $check-width;
+        opacity: 1;
+    }
+}

@@ -1,0 +1,19 @@
+.overlay {
+    background: rgba(0, 0, 0, .3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    backdrop-filter: blur(4px);
+}
+
+.dialogContent {
+    min-width: 300px;
+    background: white;
+    padding: 1.16rem;
+    border-radius: 0.5rem;
+}
