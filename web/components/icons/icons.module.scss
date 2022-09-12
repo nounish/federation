@@ -1,0 +1,26 @@
+// pending indicator
+// modified from https: //codepen.io/scottloway/pen/zqoLyQ
+$loader-size: 15px;
+
+
+.circleLoader {
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-left-color: #fff;
+    animation: loader-spin 1.2s infinite linear;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    border-radius: 50%;
+    width: $loader-size;
+    height: $loader-size;
+}
+
+@keyframes loader-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

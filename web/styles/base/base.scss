@@ -84,6 +84,8 @@ input {
 button,
 select {
   text-transform: none;
+  outline: 0;
+  border: 0;
 }
 [type="button"],
 [type="reset"],

@@ -1,3 +1,9 @@
+import styles from "./icons.module.scss";
+
+export const Loader = () => {
+  return <div className={`${styles.circleLoader}`}></div>;
+};
+
 export const RightArrow = ({ width = "15px" }) => {
   return (
     <>

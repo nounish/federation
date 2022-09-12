@@ -24,7 +24,7 @@ describe("Federation", function () {
     it("Should revert if federation does not have representation in external dao", async function () {
       const { n1, n2 } = await setup();
       const tx = n1.federation.propose(n2.delegate.address, 1);
-      await expect(tx).to.be.revertedWith("delegate does not have external dao representation");
+      await expect(tx).to.be.revertedWith("delegate does not have external DAO representation");
     });
 
     it("Should revert if external proposal does not exist", async function () {
@@ -276,7 +276,7 @@ describe("Federation", function () {
       expect(results[result]).to.equal("Undecided");
 
       const vote = n1.federation.connect(s2).castVote(1, 0, "");
-      await expect(vote).to.be.revertedWith("voter already voted");
+      await expect(vote).to.be.revertedWith("already voted");
 
       // cast abstain vote
       await n1.federation.connect(s3).castVote(1, 2, "");
@@ -321,7 +321,7 @@ describe("Federation", function () {
       const { n1, n2 } = await setup();
       await makeProposal(n1, n2);
       await expect(n1.federation.castVote(1, 0, "")).not.to.be.reverted;
-      await expect(n1.federation.castVote(1, 0, "")).to.be.revertedWith("voter already voted");
+      await expect(n1.federation.castVote(1, 0, "")).to.be.revertedWith("already voted");
     });
 
     it("Voter should be included in proposal receipts", async function () {

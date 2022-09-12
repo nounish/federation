@@ -64,6 +64,16 @@ contract Delegate is DelegateEvents {
         return ePropEndBlock;
     }
 
+    function _alreadyProposed(address eDAO, uint256 ePropID) public view returns (bool) {
+        for (uint i=1; i < proposalCount; i++){
+            if (proposals[i].eDAO == eDAO && proposals[i].eID == ePropID) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @notice Function used to propose a new proposal. Sender must have delegates above the proposal threshold
      * @param eDAO Target address of the external DAO executor
@@ -71,18 +81,23 @@ contract Delegate is DelegateEvents {
      * @return Proposal id of internal delegate action
      */
     function propose(NounsDAOStorageV1 eDAO, uint256 ePropID) public returns (uint256) {
-        require(IERC721(address(nounishToken)).balanceOf(msg.sender) > 0, "only dao members can propose");
+        require(IERC721(address(nounishToken)).balanceOf(msg.sender) > 0, "only DAO members can propose");
 
         require(
             address(eDAO) != address(0),
-            "external dao address is not valid"
+            "external DAO address is not valid"
+        );
+
+        require (
+            !_alreadyProposed(address(eDAO), ePropID),
+            "proposal already proposed"
         );
 
         // this delegate must have representation before voting can be started
         try eDAO.nouns().getPriorVotes(address(this), block.number - 1) returns (uint96 votes) {
-            require(votes > 0, "delegate does not have external dao representation");   
+            require(votes > 0, "delegate does not have external DAO representation");   
         } catch(bytes memory) {
-            revert("checking delegate representation on external dao failed");
+            revert("checking delegate representation on external DAO failed");
         }        
 
         // check when external proposal ends
@@ -93,7 +108,7 @@ contract Delegate is DelegateEvents {
             revert(
                 string.concat("invalid external proposal id: ", 
                     Strings.toString(ePropID), 
-                    " for external dao: ", 
+                    " for external DAO: ", 
                     Strings.toHexString(address(eDAO))
                 )
             );
@@ -104,7 +119,6 @@ contract Delegate is DelegateEvents {
         proposalCount++;
         DelegateAction storage newProposal = proposals[proposalCount];
         newProposal.id = proposalCount;
-
         newProposal.eID = ePropID;
         newProposal.eDAO = address(eDAO);
         newProposal.proposer = msg.sender;
@@ -164,7 +178,6 @@ contract Delegate is DelegateEvents {
 
         // untrusted external calls, don't modify any state after this point
         // support values 0=against, 1=for, 2=abstain
-
         INounsDAOGovernance eDAO = INounsDAOGovernance(proposal.eDAO);
         if (r == ProposalResult.For) {
             eDAO.castVote(proposal.eID, 1);
@@ -207,6 +220,8 @@ contract Delegate is DelegateEvents {
         uint8 support,
         string calldata reason
     ) external {
+        require(IERC721(address(nounishToken)).balanceOf(msg.sender) > 0, "only DAO members can vote");
+
         emit VoteCast(
             msg.sender,
             proposalId,
@@ -240,7 +255,7 @@ contract Delegate is DelegateEvents {
 
         require(
             receipt.hasVoted == false,
-            "voter already voted"
+            "already voted"
         );
 
         uint96 votes = nounishToken.getPriorVotes(voter, proposal.startBlock);

@@ -1,0 +1,48 @@
+[
+  {
+    "key": "nouns",
+    "name": "Nouns",
+    "website": "https://nouns.wtf",
+    "ind": "gold",
+    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "addresses": {
+      "dao": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "treasury": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "federation": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
+      "token": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "mainnetBirthBlock": 12985453,
+    "network": [
+      {
+        "key": "lil-nouns"
+      }
+    ],
+    "proposals": []
+  },
+  {
+    "key": "lil-nouns",
+    "name": "Lil Nouns",
+    "website": "https://lilnouns.wtf",
+    "ind": "blue",
+    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "addresses": {
+      "dao": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+      "treasury": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+      "federation": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
+      "token": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "mainnetBirthBlock": 12985453,
+    "network": [
+      {
+        "key": "nouns"
+      }
+    ],
+    "proposals": []
+  }
+]

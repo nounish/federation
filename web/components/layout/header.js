@@ -5,15 +5,20 @@ import Link from "next/link";
 export default () => {
   return (
     <header className={styles.header}>
-      <div className="mast">
+      <div>
         <Link href="/">
-          <a>
+          <a className={styles.logo}>
             <h1>Federation</h1>
           </a>
         </Link>
       </div>
       <nav>
         <ul>
+          <li>
+            <Link href="/daos">
+              <a>Explore</a>
+            </Link>
+          </li>
           <li>
             <a href="https://twitter.com/0xWiz_" target="_blank">
               <Twitter width={20} height={20} />
