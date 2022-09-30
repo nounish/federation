@@ -29,18 +29,64 @@ const setup = async function (vetoer = "") {
   return { n1: nounish, n2: nounishTwo };
 };
 
+const randomInt = (min, max) => {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+// setupLargeNetwork deploys many networked Nouns instances (NFT + governance) as well as their Federation delegates
+// to be used local testing. allows setting a custom vetoer for test purposes
+const setupLargeNetwork = async function (vetoer = "", n = 3) {
+  const [owner, m1, m2, m3, m4, m5] = await ethers.getSigners();
+  const daoMembers = [m1, m2, m3, m4, m5];
+
+  let daos = {};
+  for (let i = 1; i <= n; i++) {
+    const nounish = await deployNounish(owner, 50);
+    const Delegate = await ethers.getContractFactory("Delegate");
+    const fDelegate = await Delegate.deploy(
+      vetoer || owner.address,
+      nounish.token.address,
+      nounish.delegate.address,
+      2500
+    );
+
+    nounish.federation = fDelegate;
+    daos[`n${i}`] = { nounish };
+  }
+
+  // randomly mint a couple of NFTs for each dao member
+  for (let i = 1; i <= n; i++) {
+    let members = [];
+    for (let j = 0; j < daoMembers.length; j++) {
+      const m = daoMembers[j];
+
+      const n = randomInt(0, 25);
+      for (let p = 0; p < n; p++) {
+        await daos[`n${i}`].nounish.token.connect(m).mint();
+      }
+
+      if (n > 0) {
+        members.push(m);
+      }
+    }
+
+    daos[`n${i}`].members = members;
+  }
+
+  return { daos };
+};
+
 // deployNounish creates a new Nouns instance (NFT + governance)
-const deployNounish = async function (owner) {
+const deployNounish = async function (owner, numToMint = 5) {
   // nft
   const Token = await ethers.getContractFactory("NounishToken");
   const token = await Token.deploy();
 
   // mint some tokens to owner
-  await token.mint();
-  await token.mint();
-  await token.mint();
-  await token.mint();
-  await token.mint();
+  for (let i = 0; i < numToMint; i++) {
+    await token.mint();
+  }
 
   // nouns governance
   const GovTimelock = await ethers.getContractFactory("NounsDAOExecutor");
@@ -128,4 +174,6 @@ module.exports = {
   setup,
   deployNounish,
   makeProposal,
+  randomInt,
+  setupLargeNetwork,
 };

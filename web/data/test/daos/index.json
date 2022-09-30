@@ -1,0 +1,82 @@
+{
+  "nouns": {
+    "name": "Nouns",
+    "key": "nouns",
+    "website": "https://nouns.wtf",
+    "dao": "https://nouns.wtf/vote/",
+    "ind": "gold",
+    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "addresses": {
+      "dao": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
+      "treasury": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+      "federation": "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1",
+      "token": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "mainnetBirthBlock": 0,
+    "network": [
+      {
+        "key": "lil-nouns"
+      },
+      {
+        "key": "pico-nouns"
+      }
+    ],
+    "proposals": []
+  },
+  "lil-nouns": {
+    "name": "Lil Nouns",
+    "key": "lil-nouns",
+    "website": "https://lilnouns.wtf",
+    "dao": "https://lilnouns.wtf/vote/",
+    "ind": "blue",
+    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "addresses": {
+      "dao": "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75",
+      "treasury": "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8",
+      "federation": "0x34B40BA116d5Dec75548a9e9A8f15411461E8c70",
+      "token": "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "mainnetBirthBlock": 0,
+    "fedBirthBlock": 0,
+    "network": [
+      {
+        "key": "nouns"
+      }
+    ],
+    "proposals": []
+  },
+  "pico-nouns": {
+    "name": "Pico Nouns",
+    "key": "pico-nouns",
+    "website": "https://lilnouns.wtf",
+    "dao": "https://lilnouns.wtf/vote/",
+    "ind": "purple",
+    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "addresses": {
+      "dao": "0xc582Bc0317dbb0908203541971a358c44b1F3766",
+      "treasury": "0xe1Fd27F4390DcBE165f4D60DBF821e4B9Bb02dEd",
+      "federation": "0xB2b580ce436E6F77A5713D80887e14788Ef49c9A",
+      "token": "0xD0141E899a65C95a556fE2B27e5982A6DE7fDD7A"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "mainnetBirthBlock": 0,
+    "fedBirthBlock": 0,
+    "network": [
+      {
+        "key": "nouns"
+      },
+      {
+        "key": "lil-nouns"
+      }
+    ],
+    "proposals": []
+  }
+}

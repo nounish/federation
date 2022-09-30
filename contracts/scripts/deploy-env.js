@@ -1,61 +1,94 @@
 const hre = require("hardhat");
 const { ethers } = require("hardhat");
-const { setup, encodeParameters } = require("../test/utils");
+const { setupLargeNetwork, encodeParameters, randomInt } = require("../test/utils");
+const randomTitle = require("random-title");
 
 async function main() {
-  const { n1, n2 } = await setup();
-  const [owner, eDAOMember] = await ethers.getSigners();
+  const n = 3;
+  const { daos } = await setupLargeNetwork("", n);
+  const [owner] = await ethers.getSigners();
 
   // deploy multicall contract for local testing
   const Multicall = await ethers.getContractFactory("Multicall");
   const multicall = await Multicall.deploy();
 
-  // delegate n2 representation to federation
-  await n2.token.delegate(n1.federation.address);
+  // network daos
+  const network = { n1: [], n2: [], n3: [] };
+  await Promise.all(
+    Object.keys(daos).map(async (key) => {
+      switch (key) {
+        case "n1":
+          await daos[key].nounish.token.delegate(daos.n2.nounish.federation.address);
+          network.n2.push("n1");
 
-  // create external proposal under another edao user
-  await n2.token.connect(eDAOMember).mint();
+          if (daos[key].members.length) {
+            await daos[key].nounish.token.connect(daos[key].members[0]).delegate(daos.n3.nounish.federation.address);
+            daos[key].members.shift();
+            network.n3.push("n1");
+          }
 
-  const targets = [n2.token.address];
-  const values = ["0"];
-  const signatures = ["balanceOf(address)"];
-  const callDatas = [encodeParameters(["address"], [owner.address])];
+          break;
+        case "n2":
+          await daos[key].nounish.token.delegate(daos.n1.nounish.federation.address);
+          network.n1.push("n2");
 
-  await n2.delegate
-    .connect(eDAOMember)
-    .propose(targets, values, signatures, callDatas, "# This is the title of a proposal");
+          if (daos[key].members.length) {
+            await daos[key].nounish.token.connect(daos[key].members[0]).delegate(daos.n3.nounish.federation.address);
+            daos[key].members.shift();
+            network.n3.push("n2");
+          }
 
-  const walletInfo = [
-    { name: "owner", address: owner.address },
-    { name: "eDAOMember", address: eDAOMember.address },
-  ];
+          break;
+        case "n3":
+          await daos[key].nounish.token.delegate(daos.n1.nounish.federation.address);
+          network.n1.push("n3");
 
-  const n1Treasury = await n1.delegate.timelock();
-  const n2Treasury = await n2.delegate.timelock();
+          break;
+      }
+    })
+  );
 
-  const info = [
-    {
-      name: "NounsDAO",
-      dao: n1.delegate.address,
-      treasury: n1Treasury,
-      federation: n1.federation.address,
-      token: n1.token.address,
-    },
-    {
-      name: "Lil NounsDAO",
-      dao: n2.delegate.address,
-      treasury: n2Treasury,
-      federation: n2.federation.address,
-      token: n2.token.address,
-    },
-  ];
+  // for each dao open up a proposal from a random member
+  await Promise.all(
+    Object.keys(daos).map(async (key) => {
+      const { members } = daos[key];
+      const randomMember = members[Math.floor(Math.random() * members.length)];
+      const targets = [daos[key].nounish.token.address];
+      const values = ["0"];
+      const signatures = ["balanceOf(address)"];
+      const callDatas = [encodeParameters(["address"], [owner.address])];
 
-  console.log("");
-  console.log("Wallets:", walletInfo);
-  console.log("");
+      if (randomMember) {
+        await daos[key].nounish.delegate
+          .connect(randomMember)
+          .propose(targets, values, signatures, callDatas, `# ${randomTitle({ min: 4, max: 11 })}`);
+
+        await hre.network.provider.send("evm_setAutomine", [false]);
+        await hre.network.provider.send("evm_setIntervalMining", [0]);
+        await hre.network.provider.send("hardhat_mine", ["0x5DC"]); // 1500 blocks
+        await hre.network.provider.send("evm_setAutomine", [true]);
+      }
+    })
+  );
+
+  const federation = await Promise.all(
+    Object.keys(daos).map(async (key) => {
+      const t = await daos[key].nounish.delegate.timelock();
+      return {
+        name: key,
+        dao: daos[key].nounish.delegate.address,
+        treasury: t,
+        federation: daos[key].nounish.federation.address,
+        token: daos[key].nounish.token.address,
+        members: daos[key].members.map((m) => m.address),
+        network: network[key],
+      };
+    })
+  );
+
   console.log("Multicall:", multicall.address);
   console.log("");
-  console.log("Federation:", info);
+  console.log("Federation:", federation);
   console.log("");
 }
 

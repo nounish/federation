@@ -81,7 +81,10 @@ contract Delegate is DelegateEvents {
      * @return Proposal id of internal delegate action
      */
     function propose(NounsDAOStorageV1 eDAO, uint256 ePropID) public returns (uint256) {
-        require(IERC721(address(nounishToken)).balanceOf(msg.sender) > 0, "only DAO members can propose");
+        require(
+            nounishToken.getPriorVotes(msg.sender, block.number - 1) > 0,
+            "representation required to start a vote"
+        );
 
         require(
             address(eDAO) != address(0),
@@ -220,29 +223,6 @@ contract Delegate is DelegateEvents {
         uint8 support,
         string calldata reason
     ) external {
-        require(IERC721(address(nounishToken)).balanceOf(msg.sender) > 0, "only DAO members can vote");
-
-        emit VoteCast(
-            msg.sender,
-            proposalId,
-            support,
-            castVoteInternal(msg.sender, proposalId, support),
-            reason
-        );
-    }
-
-    /**
-     * @notice Internal function that caries out voting logic
-     * @param voter The voter that is casting their vote
-     * @param proposalId The id of the proposal to vote on
-     * @param support The support value for the vote. 0=against, 1=for, 2=abstain
-     * @return The number of votes cast
-     */
-    function castVoteInternal(
-        address voter,
-        uint256 proposalId,
-        uint8 support
-    ) internal returns (uint96) {
         require(
             state(proposalId) == ProposalState.Active,
             "voting is closed"
@@ -251,14 +231,17 @@ contract Delegate is DelegateEvents {
         require(support <= 2, "invalid vote type");
 
         DelegateAction storage proposal = proposals[proposalId];
-        Receipt storage receipt = proposal.receipts[voter];
+
+        uint96 votes = nounishToken.getPriorVotes(msg.sender, proposal.startBlock);
+        require(votes > 0, "caller does not have votes");
+
+        Receipt storage receipt = proposal.receipts[msg.sender];
 
         require(
             receipt.hasVoted == false,
             "already voted"
         );
 
-        uint96 votes = nounishToken.getPriorVotes(voter, proposal.startBlock);
         if (support == 0) {
             proposal.againstVotes = proposal.againstVotes + votes;
         } else if (support == 1) {
@@ -271,7 +254,13 @@ contract Delegate is DelegateEvents {
         receipt.support = support;
         receipt.votes = votes;
 
-        return votes;
+        emit VoteCast(
+            msg.sender,
+            proposalId,
+            support,
+            votes,
+            reason
+        );
     }
 
     /**

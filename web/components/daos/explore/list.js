@@ -13,9 +13,9 @@ export default ({ items }) => {
         <span>Discover communities that have integrated with Federation to manage external governance.</span>
       </div>
       <div className={styles.daos}>
-        {items.map((item, i) => (
-          <Item key={i} {...item} daoKey={item.key} />
-        ))}
+        {items.map((item, i) => {
+          return <Item key={i} {...item} daoKey={item.key} />;
+        })}
       </div>
     </>
   );

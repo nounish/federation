@@ -1,8 +1,9 @@
-import DAOIndexData from "../../../data/daos";
 import styles from "./item.module.scss";
 import Proposer from "./proposer";
 import ETA from "./eta";
 import Actions from "./actions";
+import { Users } from "react-feather";
+import useDAOIndex from "../../../hooks/daoData";
 
 const Support = ({ forVotes, againstVotes, abstainVotes }) => {
   let s = "";
@@ -21,8 +22,17 @@ const Support = ({ forVotes, againstVotes, abstainVotes }) => {
   return <span className={`${styles.support} ${styles[s.toLowerCase()]}`}>{s}</span>;
 };
 
+const Quorum = ({ quorumVotes }) => {
+  return (
+    <>
+      <Users size={16} />
+      {quorumVotes}
+    </>
+  );
+};
+
 export default (props) => {
-  const d = DAOIndexData[props.eDAOKey];
+  const daoIndex = useDAOIndex();
 
   const isExecutable = (() => {
     if (props.proposed) {
@@ -35,6 +45,8 @@ export default (props) => {
 
     return false;
   })();
+
+  const d = daoIndex[props.eDAOKey];
 
   return (
     <a className={styles.iw} target="_blank" href={`${d.dao}${props.eID}`}>
@@ -49,13 +61,7 @@ export default (props) => {
               <Proposer addr={props.eProposer} />
             </div>
             <div className={styles.quorum}>
-              {!props.executed && props.proposed ? (
-                <span>
-                  {props.votes}/{props.quorumVotes}
-                </span>
-              ) : (
-                <Support {...props} />
-              )}
+              {!props.executed && props.proposed ? <Quorum quorumVotes={props.quorumVotes} /> : <Support {...props} />}
             </div>
           </div>
           <span className={styles.time}>

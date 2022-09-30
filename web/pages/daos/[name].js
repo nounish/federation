@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
-import Data from "../../data/daos/index.json";
+import { useEffect } from "react";
+import { useProvider } from "wagmi";
 import List from "../../components/daos/proposals/list";
 import Layout from "../../components/layout/app";
 import { useRouter } from "next/router";
 import useStore from "../../hooks/store/chain/useStore";
-import { useProvider } from "wagmi";
+import useDAOIndex from "../../hooks/daoData";
 import ParentDAOContext from "../../hooks/context/parentDAO";
 
 export default () => {
+  const daoIndex = useDAOIndex();
   const router = useRouter();
   const provider = useProvider();
   const { name } = router.query;
@@ -25,7 +26,7 @@ export default () => {
     }
   }, [name]);
 
-  const d = Data[name];
+  const d = daoIndex[name];
   if (!name) return null;
 
   return (

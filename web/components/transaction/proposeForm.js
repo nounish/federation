@@ -4,8 +4,8 @@ import { useWaitForTransaction, useProvider } from "wagmi";
 import { ethers } from "ethers";
 import useStore from "../../hooks/store/chain/useStore";
 import FDelegateABI from "../../abi/f-delegate.json";
-import DAOIndexData from "../../data/daos/index.json";
 import ParentDAOContext from "../../hooks/context/parentDAO";
+import useDAOIndex from "../../hooks/daoData";
 
 const parsePropIDFromCreatedLog = (contract, logs = []) => {
   for (let log in logs) {
@@ -23,6 +23,8 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title }) => {
   const parentDAO = useContext(ParentDAOContext);
   const { data, error, isLoading, isSuccess } = useWaitForTransaction({ hash: activeTx.hash });
   const setProposalProposed = useStore((state) => state.setProposalProposed);
+  const refreshProposal = useStore((state) => state.refreshProposal);
+  const daoIndex = useDAOIndex();
 
   // update proposal state in store when the tx is confirmed
   useEffect(() => {
@@ -35,7 +37,9 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title }) => {
           return;
         }
 
-        setProposalProposed(parentDAO.key, pID, eDAOKey, eID);
+        await setProposalProposed(parentDAO.key, pID, eDAOKey, eID);
+
+        refreshProposal(parentDAO.key, pID, eDAOKey, eID, p);
       };
 
       try {
@@ -64,6 +68,7 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title }) => {
   };
 
   const st = determineState(isLoading, isSuccess, error);
+
   return (
     <form
       onSubmit={async (e) => {
@@ -111,7 +116,7 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title }) => {
             </div>
           </label>
           <label>DAO</label>
-          <input type="text" disabled placeholder={DAOIndexData[eDAOKey].name} />
+          <input type="text" disabled placeholder={daoIndex[eDAOKey]?.name} />
           <label>Proposal</label>
           <input type="text" disabled placeholder={`#${eID}`} />
           <label>Title</label>
