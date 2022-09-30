@@ -2,7 +2,7 @@ import styles from "./voteForm.module.scss";
 import { useEffect, useContext } from "react";
 import { useWaitForTransaction, useProvider, useAccount } from "wagmi";
 import useStore from "../../hooks/store/chain/useStore";
-import DAOIndexData from "../../data/daos/index.json";
+import useDAOIndex from "../../hooks/daoData";
 import ParentDAOContext from "../../hooks/context/parentDAO";
 
 const supportLabel = { 0: "against", 1: "for", 2: "abstain" };
@@ -11,6 +11,7 @@ export default ({ setOpen, onFinished, activeTx, id, eDAOKey, eID, title, txType
   const parentDAO = useContext(ParentDAOContext);
   const { error, isLoading, isSuccess } = useWaitForTransaction({ hash: activeTx.hash });
   const refreshProposal = useStore((state) => state.refreshProposal);
+  const daoIndex = useDAOIndex();
 
   // refresh proposal state
   useEffect(() => {
@@ -23,7 +24,7 @@ export default ({ setOpen, onFinished, activeTx, id, eDAOKey, eID, title, txType
         fn();
       } catch (err) {
         // TODO :- error handling
-        console.error(err);
+        console.error("could not refresh proposal", err);
       }
     }
   }, [isSuccess]);
@@ -93,7 +94,7 @@ export default ({ setOpen, onFinished, activeTx, id, eDAOKey, eID, title, txType
             </div>
           </label>
           <label>DAO</label>
-          <input type="text" disabled placeholder={DAOIndexData[eDAOKey].name} />
+          <input type="text" disabled placeholder={daoIndex[eDAOKey]?.name} />
           <label>Proposal</label>
           <input type="text" disabled placeholder={`#${eID}`} />
           <label>Title</label>

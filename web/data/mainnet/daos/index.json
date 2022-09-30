@@ -1,0 +1,52 @@
+{
+  "nouns": {
+    "name": "Nouns",
+    "key": "nouns",
+    "website": "https://nouns.wtf",
+    "dao": "https://nouns.wtf/vote/",
+    "ind": "gold",
+    "etherscan": "https://etherscan.io/address/0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
+    "addresses": {
+      "dao": "0x6f3E6272A167e8AcCb32072d08E0957F9c79223d",
+      "treasury": "0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
+      "federation": "0x00",
+      "token": "0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "daoBirthBlock": 12985000,
+    "fedBirthBlock": 12985000,
+    "network": [
+      {
+        "key": "lil-nouns"
+      }
+    ],
+    "proposals": []
+  },
+  "lil-nouns": {
+    "name": "Lil Nouns",
+    "key": "lil-nouns",
+    "website": "https://lilnouns.wtf",
+    "dao": "https://lilnouns.wtf/vote/",
+    "ind": "blue",
+    "etherscan": "https://etherscan.io/address/0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
+    "addresses": {
+      "dao": "0x5d2C31ce16924C2a71D317e5BbFd5ce387854039",
+      "treasury": "0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
+      "federation": "0x00",
+      "token": "0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "daoBirthBlock": 14736000,
+    "fedBirthBlock": 14736000,
+    "network": [
+      {
+        "key": "nouns"
+      }
+    ],
+    "proposals": []
+  }
+}

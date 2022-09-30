@@ -1,5 +1,6 @@
 import "../styles/site.scss";
 import "@rainbow-me/rainbowkit/styles.css";
+import PlausibleProvider from "next-plausible";
 
 import { getDefaultWallets, RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
@@ -39,7 +40,9 @@ export default ({ Component, pageProps }) => {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} theme={theme} appInfo={{ appName: "Federation" }}>
-        <Component {...pageProps} />
+        <PlausibleProvider domain="federation.wtf" trackOutboundLinks>
+          <Component {...pageProps} />
+        </PlausibleProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );

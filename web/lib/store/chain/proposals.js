@@ -4,7 +4,7 @@ import NounishDAOABI from "../../../abi/nounish-dao.json";
 import FedDelegateABI from "../../../abi/f-delegate.json";
 
 // custom multicall address for local testing
-setMulticallAddress(31337, "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d");
+setMulticallAddress(31337, "0xB377a2EeD7566Ac9fCb0BA673604F9BF875e2Bab");
 
 export const getDAOProposalCreatedLogs = async (address, provider, queryFromBlock = 0) => {
   const nd = new ethers.Contract(address, NounishDAOABI, provider);
@@ -70,7 +70,7 @@ export const getDAOProposals = async (ids = [], address, provider) => {
 };
 
 // get active proposals in federation by dao and prop id
-export const getFedProposalCreatedLogs = async (address, provider, eDAOAddress, eProps = []) => {
+export const getFedProposalCreatedLogs = async (address, provider, eDAOAddress, eProps = [], queryFromBlock = 0) => {
   const nd = new ethers.Contract(address, FedDelegateABI, provider);
   const block = await provider.getBlock("latest");
   const blockNumber = ethers.BigNumber.from(block.number);
@@ -81,6 +81,7 @@ export const getFedProposalCreatedLogs = async (address, provider, eDAOAddress, 
 
     const qf = {
       ...nd.filters.ProposalCreated(null, null, eDAOAddress, prop, null, null, null),
+      fromBlock: queryFromBlock,
     };
 
     const logs = await nd.queryFilter(qf);

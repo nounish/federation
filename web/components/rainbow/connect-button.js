@@ -12,7 +12,7 @@ export default () => {
         {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
           // show chain selection modal if not connected to the right network
           useEffect(() => {
-            if (chain.unsupported) {
+            if (chain && chain.unsupported) {
               setTimeout(() => {
                 openChainModal();
               }, 200);

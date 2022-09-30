@@ -2,7 +2,8 @@ import { persist } from "zustand/middleware";
 import create from "zustand";
 import { ethers } from "ethers";
 import Proposal from "../../../lib/federation/proposal";
-import DAOIndex from "../../../data/daos";
+import TestDAOIndex from "../../../data/test/daos";
+import MainnetDAOIndex from "../../../data/test/daos";
 import {
   getDAOProposals,
   getDAOProposalCreatedLogs,
@@ -12,9 +13,12 @@ import {
   getFedMeta,
 } from "../../../lib/store/chain/proposals";
 
+const isDev = process.env.NEXT_PUBLIC_ENV == "dev";
+const DAOIndex = isDev ? TestDAOIndex : MainnetDAOIndex;
+
 // compose data store methods on dao index as some kind of ETH poor mans db
-let store = (set, get) =>
-  Object.assign(DAOIndex, {
+let store = (set, get) => {
+  return Object.assign({}, DAOIndex, {
     // getProposals pulls props from each external DAO and filter out any proposals with an endblock
     // in the past. mucho expensivo, be careful...
     getProposals: async (key, provider) => {
@@ -32,7 +36,7 @@ let store = (set, get) =>
       // get all external proposals and group them by dao
       const propsByDAO = await Promise.all(
         networkAddrs.map(async (n) => {
-          const ePropCreatedLogs = await getDAOProposalCreatedLogs(n.dao, provider);
+          const ePropCreatedLogs = await getDAOProposalCreatedLogs(n.dao, provider, DAOIndex[n.key].mainnetBirthBlock);
 
           // get external prop data and merge it with log data
           const eIDs = ePropCreatedLogs.proposals.map((p) => p.id);
@@ -44,7 +48,14 @@ let store = (set, get) =>
           });
 
           // get all prop data in the federation for each external dao and merge it with log data
-          const fedPropCreatedLogs = await getFedProposalCreatedLogs(d.addresses.federation, provider, n.dao, eIDs);
+          const fedPropCreatedLogs = await getFedProposalCreatedLogs(
+            d.addresses.federation,
+            provider,
+            n.dao,
+            eIDs,
+            d.fedBirthBlock
+          );
+
           const fIDs = fedPropCreatedLogs.map((p) => p.id);
           const ps = await getFedProposals(fIDs, d.addresses.federation, provider);
 
@@ -90,12 +101,13 @@ let store = (set, get) =>
             return 1;
           }
 
-          if (a.externalEndBlock.gt(b.externalEndBlock)) {
+          if (a.externalEndBlock > b.externalEndBlock) {
             return 1;
           }
 
           return -1;
-        });
+        })
+        .filter(filterInactive);
 
       const nState = { [key]: { ...get()[key], proposals: propFeed, fedMeta } };
       set((state) => {
@@ -170,9 +182,10 @@ let store = (set, get) =>
       });
     },
   });
+};
 
 const filterInactive = (f) => {
-  if (f.canceled || f.vetoed || f.executed) {
+  if (f.canceled || f.vetoed) {
     return null;
   }
 

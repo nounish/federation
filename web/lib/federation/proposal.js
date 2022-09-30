@@ -3,13 +3,14 @@ import { parseDescription } from "./parsing";
 
 class Proposal {
   constructor(networkAddress, eProp, fProp) {
-    this.id = fProp?.id.toNumber() || 0;
     const body = parseDescription(eProp?.description);
+    this.id = fProp?.id.toNumber() || 0;
     this.title = body.title || "";
     this.description = body.desc || "";
     this.proposer = fProp?.proposer || "";
     this.eDAOKey = networkAddress.key || "";
     this.eDAO = networkAddress.dao || "";
+
     this.eID = eProp?.id.toNumber() || 0;
     this.eProposer = eProp?.proposer || "";
     this.eta = eProp?.eta.toNumber() || 0;
@@ -27,6 +28,7 @@ class Proposal {
   }
 
   update(fProp) {
+    console.log("in update", fProp);
     this.quorumVotes = fProp?.quorumVotes.toNumber() || 0;
     this.forVotes = fProp?.forVotes.toNumber() || 0;
     this.againstVotes = fProp?.againstVotes.toNumber() || 0;

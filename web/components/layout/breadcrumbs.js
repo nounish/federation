@@ -2,15 +2,16 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "./breadcrumbs.module.scss";
 import { RightArrow } from "../icons";
-import DAOIndexData from "../../data/daos";
+import useDAOIndex from "../../hooks/daoData";
 
 export default () => {
   const router = useRouter();
+  const daoIndex = useDAOIndex();
 
   const { name } = router.query;
   if (!name) return null;
 
-  const d = DAOIndexData[name];
+  const d = daoIndex[name];
   const indStyle = { backgroundColor: d.ind };
 
   return (
