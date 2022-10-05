@@ -5,11 +5,18 @@ import PlausibleProvider from "next-plausible";
 import { getDefaultWallets, RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { infuraProvider } from "wagmi/providers/infura";
 
-const validChains = process.env.NEXT_PUBLIC_ENV == "dev" ? [chain.hardhat] : [chain.mainnet, chain.hardhat];
+const validChains = process.env.NEXT_PUBLIC_ENV == "dev" ? [chain.hardhat] : [chain.mainnet];
 
 const { chains, provider } = configureChains(validChains, [
-  jsonRpcProvider({ rpc: (chain) => ({ http: chain.rpcUrls.default }) }),
+  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY }),
+  jsonRpcProvider({
+    rpc: (c) => {
+      if (c.id !== chain.hardhat.id) return null;
+      return { http: c.rpcUrls.default };
+    },
+  }),
 ]);
 
 const { connectors } = getDefaultWallets({

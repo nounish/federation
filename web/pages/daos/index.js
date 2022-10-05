@@ -17,8 +17,8 @@ export default () => {
     <Layout title="Communities on Federation">
       <List items={daoIndexAsList} />
       <span style={{ display: "block", textAlign: "center", marginTop: "1.16rem" }}>
-        Interested in using Federation? Contact{" "}
-        <a href="https://twitter.com/0xWiz_" target="_blank">
+        Interested? Contact{" "}
+        <a href="https://twitter.com/0xWiz_" target="_blank" style={{ color: "#000" }}>
           wiz ⌐◨-◨
         </a>
       </span>

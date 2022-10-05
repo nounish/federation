@@ -3,7 +3,7 @@ import create from "zustand";
 import { ethers } from "ethers";
 import Proposal from "../../../lib/federation/proposal";
 import TestDAOIndex from "../../../data/test/daos";
-import MainnetDAOIndex from "../../../data/test/daos";
+import MainnetDAOIndex from "../../../data/mainnet/daos";
 import {
   getDAOProposals,
   getDAOProposalCreatedLogs,
@@ -13,7 +13,7 @@ import {
   getFedMeta,
 } from "../../../lib/store/chain/proposals";
 
-const isDev = process.env.NEXT_PUBLIC_ENV == "dev";
+const isDev = process.env.NEXT_PUBLIC_ENV === "dev";
 const DAOIndex = isDev ? TestDAOIndex : MainnetDAOIndex;
 
 // compose data store methods on dao index as some kind of ETH poor mans db
@@ -122,9 +122,10 @@ let store = (set, get) => {
       const addresses = get()[key].addresses;
       const balance = await provider.getBalance(addresses.treasury);
       const ethBalance = ethers.utils.formatEther(balance);
+      const fixed = (+ethBalance).toFixed(0);
 
       // merge old state with new state
-      const nState = { [key]: { ...get()[key], treasury: { balance: ethBalance } } };
+      const nState = { [key]: { ...get()[key], treasury: { balance: fixed } } };
       set((state) => {
         return {
           ...state,
@@ -192,6 +193,6 @@ const filterInactive = (f) => {
   return f;
 };
 
-store = persist(store, { name: "federation" });
+store = persist(store, { name: isDev ? "federation-dev" : "federation" });
 
 export default create(store);

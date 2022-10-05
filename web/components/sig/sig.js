@@ -60,7 +60,7 @@ export default () => {
           wiz ⌐◨-◨
         </a>
       </div>
-      <div className={`${styles.cs} hidden-mobile`}>Coming Soon</div>
+      <div className={`${styles.cs} hidden-mobile`}>Public Beta</div>
     </div>
   );
 };

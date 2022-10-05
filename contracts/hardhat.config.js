@@ -1,17 +1,8 @@
 require("@nomicfoundation/hardhat-toolbox");
-const { ethers } = require("ethers");
+require("./tasks");
 
-task("mine", "mines an arbitrary amount of blocks locally")
-  .addParam("n", "number of blocks")
-  .setAction(async (args) => {
-    const n = parseInt(args.n, 10);
-    const nAsHex = ethers.utils.hexlify(n);
-
-    await network.provider.send("evm_setAutomine", [false]);
-    await network.provider.send("evm_setIntervalMining", [0]);
-    await network.provider.send("hardhat_mine", [nAsHex]);
-    await network.provider.send("evm_setAutomine", [true]);
-  });
+const dotenv = require("dotenv");
+dotenv.config({ path: __dirname + "/.env" });
 
 module.exports = {
   solidity: {
@@ -25,4 +16,13 @@ module.exports = {
     },
   },
   paths: { sources: "./src" },
+  networks: {
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts: [process.env.WALLET_PRIVATE_KEY || null].filter((f) => f),
+    },
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
 };

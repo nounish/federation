@@ -76,6 +76,10 @@ describe("Federation", function () {
 
       const tx2 = n1.federation.execute(1);
       await expect(tx2).to.be.revertedWith("proposal can only be executed if it is within the execution window");
+      await mineBlock();
+
+      const dupeProp = n1.federation.propose(n2.delegate.address, ePropID);
+      await expect(dupeProp).to.be.revertedWith("proposal already proposed");
 
       // advance into execution window (end block of federation proposal is inherited from external proposal)
       const fProp = await n1.federation.proposals(1);

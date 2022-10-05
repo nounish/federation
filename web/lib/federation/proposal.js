@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import { parseDescription } from "./parsing";
 
 class Proposal {
@@ -21,6 +20,7 @@ class Proposal {
     this.forVotes = fProp?.forVotes.toNumber() || 0;
     this.againstVotes = fProp?.againstVotes.toNumber() || 0;
     this.abstainVotes = fProp?.abstainVotes.toNumber() || 0;
+    this.canceled = eProp.canceled || false;
     this.vetoed = fProp?.vetoed || false;
     this.executed = fProp?.executed || false;
     this.votes = this.forVotes + this.againstVotes + this.abstainVotes;
@@ -28,7 +28,6 @@ class Proposal {
   }
 
   update(fProp) {
-    console.log("in update", fProp);
     this.quorumVotes = fProp?.quorumVotes.toNumber() || 0;
     this.forVotes = fProp?.forVotes.toNumber() || 0;
     this.againstVotes = fProp?.againstVotes.toNumber() || 0;

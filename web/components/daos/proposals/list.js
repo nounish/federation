@@ -21,7 +21,7 @@ export default ({ props, fedMeta }) => {
       </div>
       {executed.length ? (
         <div className={styles.list}>
-          <span className={styles.listFilterBar}>Executed proposals ({executed.length})</span>
+          <span className={styles.listFilterBar}>Executed votes ({executed.length})</span>
           {executed.map((item, id) => {
             return <Item key={id} {...item} fedMeta={fedMeta} executed />;
           })}

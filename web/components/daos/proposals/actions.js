@@ -11,10 +11,19 @@ import { Loader } from "../../icons";
 
 const errorMsgRegex = /(?<=\')(.*?)(?=\')/g;
 const parseError = (error) => {
+  if (error?.reason === "") {
+    return "";
+  }
+
   // capitalize error message
   const msg = error.reason?.match(errorMsgRegex);
   if (msg) {
     return msg[0].charAt(0).toUpperCase() + msg[0].slice(1);
+  }
+
+  const reversionMsg = error.reason?.replace("execution reverted: ", "");
+  if (reversionMsg) {
+    return reversionMsg.charAt(0).toUpperCase() + reversionMsg.slice(1);
   }
 
   console.error("parseError", error);
@@ -38,12 +47,26 @@ const Vote = (props) => {
     refetch();
   }, [props.forVotes, props.againstVotes, props.abstainVotes]);
 
+  // ignore prior votes not yet determined error which can show up if user
+  // has started a vote but tx has not been mined
+  const isDisabled = (() => {
+    if (parseError(err || { reason: "" }).includes("getPriorVotes")) {
+      if (userVote?.hasVoted) {
+        return true;
+      }
+
+      return false;
+    }
+
+    return userVote?.hasVoted || err;
+  })();
+
   return (
     <div className={styles.details}>
       <ul className={styles.actionList}>
         <VoteAction
           setErr={setErr}
-          disabled={userVote?.hasVoted || err}
+          disabled={isDisabled}
           className={`${styles.for} action`}
           pID={props.id}
           support={1}
@@ -55,7 +78,7 @@ const Vote = (props) => {
         </VoteAction>
         <VoteAction
           setErr={setErr}
-          disabled={userVote?.hasVoted || err}
+          disabled={isDisabled}
           className={`${styles.against} action`}
           pID={props.id}
           support={0}
@@ -66,7 +89,7 @@ const Vote = (props) => {
         </VoteAction>
         <VoteAction
           setErr={setErr}
-          disabled={userVote?.hasVoted || err}
+          disabled={isDisabled}
           className={`${styles.abstain} action`}
           pID={props.id}
           support={2}
@@ -77,10 +100,14 @@ const Vote = (props) => {
         </VoteAction>
       </ul>
       {err ? (
-        <div className={styles.errorMsgVote}>
-          <AlertCircle size={18} style={{ color: "red" }} />
-          {parseError(err)}
-        </div>
+        // ignore prior votes not yet determined error which can show up if user
+        // has started a vote but tx has not been mined
+        !parseError(err).includes("getPriorVotes") ? (
+          <div className={styles.errorMsgVote}>
+            <AlertCircle size={18} style={{ color: "red" }} />
+            {parseError(err)}
+          </div>
+        ) : null
       ) : null}
     </div>
   );
@@ -179,10 +206,10 @@ const Propose = (props) => {
               <button id="start" className={`${styles.propose} ${styles.disabled}`} disabled>
                 <span>Start Vote</span>
               </button>
-              <div className={styles.errorMsg}>
+              {/* <div className={styles.errorMsg}>
                 <AlertCircle size={18} style={{ color: "red" }} />
                 {parseError(error)}
-              </div>
+              </div> */}
             </>
           );
         }
@@ -229,7 +256,7 @@ const Execute = (props) => {
   };
 
   const isDisabled = error || !writeAsync;
-  let parsedError = parseError(error || {});
+  let parsedError = parseError(error || { reason: "" });
   let ignoreErr = false;
   if (parsedError.includes("execution window")) {
     ignoreErr = true;
@@ -255,7 +282,7 @@ const Execute = (props) => {
         }
 
         return (
-          <button id="start" disabled={isDisabled} className={styles.propose}>
+          <button id="start" disabled={isDisabled} className={`${styles.propose} ${styles.execute}`}>
             <span className={isLoading ? styles.hidden : ""}>Execute</span>
             <span className={isLoading ? `${styles.visible} ${styles.loader}` : styles.loader}>
               <Loader />

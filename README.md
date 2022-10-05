@@ -1,15 +1,20 @@
 # Federation
 
 [![Built by wiz][builtby-badge]][wiz]
-[![Public infrastructure][pi-badge]][federation]
 [![License][license-badge]][license]
+![build status](https://github.com/nounish/federation/actions/workflows/hh.js.yml/badge.svg)
 
-DAO to DAO governance rails
+Federation is an on-chain delegated voter which enables communities in the Nouns ecosystem to
+participate in governance with one another.
 
-Federation allows any Nounish DAO that holds voting power in another Nounish DAO
-to<br/>distribute that voting power amongst all its members.
+## Project
 
-Coming soon • [Read the litepaper](litepaper)
+This repository contains the source code for the Federation contract, as well as the frontend
+for interacting with the contract.
+
+## Supported by
+
+[![nounsdao][noun-logo]](nouns-site)
 
 [wiz]: https://twitter.com/0xWiz_
 [federation]: https://www.federation.wtf/
@@ -17,4 +22,5 @@ Coming soon • [Read the litepaper](litepaper)
 [license]: https://github.com/nounish/federation/blob/master/LICENSE
 [builtby-badge]: https://img.shields.io/badge/built%20by-wiz%20%E2%8C%90%E2%97%A8--%E2%97%A8-%236758ee
 [license-badge]: https://img.shields.io/badge/license-GPL%203.0-orange
-[pi-badge]: https://img.shields.io/badge/-public%20infrastructure-blue
+[noun-logo]: https://pbs.twimg.com/profile_images/1467601380567359498/oKcnQo_S_200x200.jpg
+[nouns-site]: https://nouns.wtf/

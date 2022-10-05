@@ -35,7 +35,7 @@ export default () => {
               <div className={`${styles.dot}`} style={indStyle}></div>
             </div>
             <Link href={`/daos/${name}`}>
-              <a>{d.name}</a>
+              <a>{d.displayName}</a>
             </Link>
           </li>
         </ul>
