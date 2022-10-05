@@ -2,12 +2,8 @@
 
 /// @title Federation
 
-// Federation is a highly modified and stripped down version of the 
-// NounsDAO governance contracts which allows any Nounish DAO that holds 
-// voting power in another Nounish DAO to distribute that voting power
-// amongst all its members - (thanks Honk):
-//
-// https://github.com/nounsDAO/nouns-monorepo/blob/master/packages/nouns-contracts/contracts/governance
+// Federation is an on-chain delegated voter which enables communities
+// in the Nouns ecosystem to participate in governance with one another
 
 // Built by wiz ⌐◨-◨ ☆ﾟ. * ･ ｡ﾟ
 

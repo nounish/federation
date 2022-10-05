@@ -65,7 +65,7 @@ contract Delegate is DelegateEvents {
     }
 
     function _alreadyProposed(address eDAO, uint256 ePropID) public view returns (bool) {
-        for (uint i=1; i < proposalCount; i++){
+        for (uint i=1; i <= proposalCount; i++){
             if (proposals[i].eDAO == eDAO && proposals[i].eID == ePropID) {
                 return true;
             }

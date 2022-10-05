@@ -1,11 +1,12 @@
 {
   "nouns": {
+    "displayName": "Nouns",
     "name": "Nouns",
     "key": "nouns",
     "website": "https://nouns.wtf",
     "dao": "https://nouns.wtf/vote/",
     "ind": "gold",
-    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
       "dao": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
       "treasury": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
@@ -27,12 +28,13 @@
     "proposals": []
   },
   "lil-nouns": {
+    "displayName": "Lil Nouns",
     "name": "Lil Nouns",
     "key": "lil-nouns",
     "website": "https://lilnouns.wtf",
     "dao": "https://lilnouns.wtf/vote/",
     "ind": "blue",
-    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
       "dao": "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75",
       "treasury": "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8",
@@ -52,12 +54,13 @@
     "proposals": []
   },
   "pico-nouns": {
+    "displayName": "Pico Nouns",
     "name": "Pico Nouns",
     "key": "pico-nouns",
-    "website": "https://lilnouns.wtf",
-    "dao": "https://lilnouns.wtf/vote/",
+    "website": "https://piconouns.wtf",
+    "dao": "https://piconouns.wtf/vote/",
     "ind": "purple",
-    "etherscan": "https://etherscan.io/address/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+    "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
       "dao": "0xc582Bc0317dbb0908203541971a358c44b1F3766",
       "treasury": "0xe1Fd27F4390DcBE165f4D60DBF821e4B9Bb02dEd",

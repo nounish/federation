@@ -26,11 +26,11 @@ export default (props) => {
   };
 
   return (
-    <Link href={`/daos/${cleanName(props.name)}`}>
+    <Link href={`/daos/${props.daoKey}`}>
       <span onClick={handleClick} className={styles.sp}>
         <div className={styles.item}>
           <div>
-            <h2>{props.name}</h2>
+            <h2>{props.displayName}</h2>
             <div className="details">
               <ul>
                 <li>Ξ {treasuryBalance}</li>

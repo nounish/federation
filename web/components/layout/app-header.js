@@ -12,6 +12,7 @@ export default ({ hasBreadCrumbs = false }) => {
           <Link href="/">
             <a>
               <h1>Federation</h1>
+              <span style={{ fontSize: "80%", fontWeight: "normal", margin: "0 0 0 5px" }}> BETA</span>
             </a>
           </Link>
         </div>

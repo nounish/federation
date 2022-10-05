@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
+    "dotenv": "^16.0.3",
+    "prompt": "^1.3.0",
     "random-title": "^1.0.4"
   }
 }

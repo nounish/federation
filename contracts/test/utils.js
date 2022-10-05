@@ -1,5 +1,3 @@
-const { network } = require("hardhat");
-
 // setup deploys two networked Nouns instances (NFT + governance) as well as their Federation delegates
 // to be used for each test run. allows setting a custom vetoer for test purposes
 const setup = async function (vetoer = "") {
