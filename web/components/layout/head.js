@@ -1,16 +1,26 @@
 import Head from "next/head";
 
+const isStage = process.env.NEXT_PUBLIC_ENV == "stage";
+const uri = isStage ? "https://stage.federation.wtf" : "https://federation.wtf";
+
 export default ({ title }) => {
   return (
     <Head>
       <meta charSet="utf-8" />
       <meta
         name="description"
-        content="Federation provides solutions for communities in the Nouns ecosystem to participate in governance with one another."
+        content="An on-chain delegated voter which enables communities in the Nouns ecosystem to participate in
+        governance with one another."
       />
-      <meta property="og:title" content="federation.wtf" />
-      <meta property="og:url" content="https://federation.wtf" />
-      <meta property="og:description" content="Nounish Federation" />
+      <meta property="og:title" content="Federation" />
+      <meta property="og:url" content={uri} />
+      <meta property="og:image" content={`${uri}/static/img/federationbanner.png`} />
+
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@0xWiz_" />
+      <meta name="twitter:title" content="Federation" />
+      <meta name="twitter:image" content={`${uri}/static/img/federationbanner.png`} />
+
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
       <link
         rel="icon"

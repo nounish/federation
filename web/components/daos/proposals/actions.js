@@ -9,7 +9,7 @@ import FedDelegateABI from "../../../abi/f-delegate.json";
 import ParentDAOContext from "../../../hooks/context/parentDAO";
 import { Loader } from "../../icons";
 
-const errorMsgRegex = /(?<=\')(.*?)(?=\')/g;
+const errorMsgRegex = /'(.*?)'/g;
 const parseError = (error) => {
   if (error?.reason === "") {
     return "";
@@ -18,7 +18,8 @@ const parseError = (error) => {
   // capitalize error message
   const msg = error.reason?.match(errorMsgRegex);
   if (msg) {
-    return msg[0].charAt(0).toUpperCase() + msg[0].slice(1);
+    let ret = msg[0].replaceAll("'", "");
+    return ret.charAt(0).toUpperCase() + ret.slice(1);
   }
 
   const reversionMsg = error.reason?.replace("execution reverted: ", "");
@@ -50,7 +51,7 @@ const Vote = (props) => {
   // ignore prior votes not yet determined error which can show up if user
   // has started a vote but tx has not been mined
   const isDisabled = (() => {
-    if (parseError(err || { reason: "" }).includes("getPriorVotes")) {
+    if (parseError(err || { reason: "" }).includes("not yet determined")) {
       if (userVote?.hasVoted) {
         return true;
       }
@@ -102,12 +103,12 @@ const Vote = (props) => {
       {err ? (
         // ignore prior votes not yet determined error which can show up if user
         // has started a vote but tx has not been mined
-        !parseError(err).includes("getPriorVotes") ? (
+        parseError(err).includes("not yet determined") ? null : (
           <div className={styles.errorMsgVote}>
             <AlertCircle size={18} style={{ color: "red" }} />
             {parseError(err)}
           </div>
-        ) : null
+        )
       ) : null}
     </div>
   );
