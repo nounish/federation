@@ -16,6 +16,10 @@
     padding: 1.16rem 1.32rem;
     margin-bottom: 0.58rem;
 
+    &:hover {
+        color: #000 !important;
+    }
+
     &>button {
         display: none;
     }

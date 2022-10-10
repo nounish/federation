@@ -26,6 +26,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.58rem;
     background: #fff;
     border: 1px solid #E3E8EE;
     transition: background 120ms cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -47,6 +48,11 @@
     font-weight: bold;
 }
 
+.description {
+    margin-top: 0.74rem;
+    display: block;
+}
+
 .item ul {
     margin: 0;
     margin-top: 0.58rem;
@@ -64,4 +70,21 @@
 
 .item li a {
     color: #000;
+}
+
+.soon {
+    opacity: 0.8;
+}
+
+.soon:hover .o {
+    opacity: 0.8;
+}
+
+.soon:hover {
+    opacity: 0.8;
+    cursor: not-allowed !important;
+}
+
+.soon:hover .item {
+    cursor: not-allowed !important;
 }

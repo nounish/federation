@@ -1,14 +1,16 @@
 import Item from "./item";
 import EmptyState from "./emptyState";
+import NetworkInfo from "./networkInfo";
 import styles from "./list.module.scss";
 
-export default ({ props, fedMeta }) => {
+export default ({ props, fedMeta, dao }) => {
   const executed = props.filter((p) => p.executed);
   const active = props.filter((p) => !p.executed);
   const isEmpty = active.length === 0;
 
   return (
     <div className="container">
+      <NetworkInfo dao={dao} />
       <div className={styles.list}>
         <span className={styles.listFilterBar}>External proposals ({active.length})</span>
         {isEmpty ? (

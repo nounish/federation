@@ -3,8 +3,10 @@
     "displayName": "Nouns",
     "name": "Nouns",
     "key": "nouns",
+    "released": false,
     "website": "https://nouns.wtf",
     "dao": "https://nouns.wtf/vote/",
+    "img": "/static/img/daos/nouns.png",
     "ind": "gold",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -26,17 +28,48 @@
     "proposals": []
   },
   "lil-nouns": {
-    "displayName": "Wiz's Lil Nouns",
+    "displayName": "Lil Nouns",
     "name": "Lil Nouns",
     "key": "lil-nouns",
+    "released": false,
     "website": "https://lilnouns.wtf",
     "dao": "https://lilnouns.wtf/vote/",
+    "img": "/static/img/daos/lil-nouns.png",
     "ind": "blue",
     "etherscan": "https://etherscan.io/tokenholdings?a=0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
     "addresses": {
       "dao": "0x5d2C31ce16924C2a71D317e5BbFd5ce387854039",
       "treasury": "0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
       "federation": "0x6CED80044091bCd965AdfA844778a47B677579f2",
+      "token": "0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "daoBirthBlock": 14736000,
+    "fedBirthBlock": 15670000,
+    "network": [
+      {
+        "key": "nouns"
+      }
+    ],
+    "proposals": []
+  },
+  "wiz-nouns": {
+    "displayName": "High Council",
+    "description": "A set of the most magical Lil Nouns owned by wiz. Members of Lil Nouns DAO collectively decide how these vote on proposals.",
+    "name": "Lil Nouns",
+    "key": "wiz-nouns",
+    "released": true,
+    "website": "https://lilnouns.wtf",
+    "dao": "https://lilnouns.wtf/vote/",
+    "img": "/static/img/daos/lil-nouns.png",
+    "ind": "purple",
+    "etherscan": "https://etherscan.io/tokenholdings?a=0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
+    "addresses": {
+      "dao": "0x5d2C31ce16924C2a71D317e5BbFd5ce387854039",
+      "treasury": "0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
+      "federation": "0x40Af7e852658E975990759c2c5350D29cBbE726f",
       "token": "0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B"
     },
     "treasury": {

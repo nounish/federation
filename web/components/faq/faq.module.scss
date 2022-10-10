@@ -1,0 +1,38 @@
+.accordion>* button:not(.collapsed),
+.accordion>* button:focus {
+    color: #000;
+    background-color: transparent;
+    box-shadow: none !important;
+}
+
+.item {
+    border: none;
+    margin-bottom: 0.58rem;
+    background-color: transparent;    
+}
+
+.header {
+    background-color: transparent;
+    button {
+        background-color: transparent;
+        font-size: 1.4454rem;
+        line-height: 2.154rem;
+        font-weight: bold;
+    }
+
+    button:not(.collapsed)::after {
+        background-image: var(--bs-accordion-btn-icon);
+    }
+}
+
+.body {
+    background-color: transparent;
+    border-radius: 0.5rem;
+    padding: 1.16rem 1.32rem;
+    margin-bottom: 0.58rem;
+}
+
+.lw {
+    margin: 0 auto;
+    max-width: 600px;
+}

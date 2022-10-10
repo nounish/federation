@@ -1,5 +1,6 @@
 import { persist } from "zustand/middleware";
 import create from "zustand";
+import _ from "lodash";
 import { ethers } from "ethers";
 import Proposal from "../../../lib/federation/proposal";
 import TestDAOIndex from "../../../data/test/daos";
@@ -22,6 +23,11 @@ let store = (set, get) => {
     // getProposals pulls props from each external DAO and filter out any proposals with an endblock
     // in the past. mucho expensivo, be careful...
     getProposals: async (key, provider) => {
+      ensureNested(key, get, set);
+
+      const block = await provider.getBlock("latest");
+      const blockNumber = ethers.BigNumber.from(block.number);
+
       // the parent dao
       const d = get()[key];
 
@@ -52,11 +58,11 @@ let store = (set, get) => {
             d.addresses.federation,
             provider,
             n.dao,
-            eIDs,
             d.fedBirthBlock
           );
 
           const fIDs = fedPropCreatedLogs.map((p) => p.id);
+
           const ps = await getFedProposals(fIDs, d.addresses.federation, provider);
 
           const fedMergedProps = fedPropCreatedLogs.map((p) => {
@@ -76,11 +82,24 @@ let store = (set, get) => {
             return { ...acc, [ePropID.toNumber()]: prop };
           }, {});
 
-          const normalizedProps = Object.keys(eKeyByPropID).map((k) => {
-            const eProp = eKeyByPropID[k];
-            const fProp = fKeyByEPropID[k];
-            return new Proposal(n, eProp, fProp);
-          });
+          const normalizedProps = Object.keys(eKeyByPropID)
+            .map((k) => {
+              const eProp = eKeyByPropID[k];
+              const fProp = fKeyByEPropID[k];
+
+              // ignore inactive props in external dao but allow active props to
+              // be proposed
+
+              if (!fProp && eProp.endBlock.toNumber() <= blockNumber.toNumber()) {
+                return null;
+              }
+
+              // defeated props should not show up in the feed
+              if (fProp?.endBlock.lt(blockNumber) && !fProp?.executed) return null;
+
+              return new Proposal(n, eProp, fProp);
+            })
+            .filter((f) => f);
 
           return { key: n.key, proposals: normalizedProps };
         })
@@ -119,6 +138,8 @@ let store = (set, get) => {
     },
     // getTreasuryMeta gets any information about the treasury
     getTreasuryMeta: async (key, provider) => {
+      ensureNested(key, get, set);
+
       const addresses = get()[key].addresses;
       const balance = await provider.getBalance(addresses.treasury);
       const ethBalance = ethers.utils.formatEther(balance);
@@ -134,6 +155,8 @@ let store = (set, get) => {
       });
     },
     refreshProposal: async (key, pID, eDAOKey, eID, provider) => {
+      ensureNested(key, get, set);
+
       const proposals = get()[key].proposals || [];
       const fedAddress = get()[key].addresses.federation;
 
@@ -191,6 +214,34 @@ const filterInactive = (f) => {
   }
 
   return f;
+};
+
+// ensureNested ensures that the nested objects are always up to date
+// since persist will only do shallow updates whenever the underlying store
+// json is updated. this should be called whenever a method pulls from
+// deeply nested objects in the store.
+const ensureNested = async (key, get, set) => {
+  const d = get()[key];
+
+  // compare nested types
+  let merge = false;
+  if (!_.isEqual(d.addresses, DAOIndex[key].addresses)) {
+    merge = true;
+  }
+
+  if (!_.isEqual(d.network, DAOIndex[key].network)) {
+    merge = true;
+  }
+
+  if (merge) {
+    console.log("merging state");
+    const nState = { [key]: _.merge(d, DAOIndex[key]) };
+    await set(() => {
+      return {
+        ...nState,
+      };
+    });
+  }
 };
 
 store = persist(store, { name: isDev ? "federation-dev" : "federation" });

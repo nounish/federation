@@ -1,8 +1,7 @@
 .tx {
     h3 {
-        font-size: 1.4454rem;
+        font-size: 1.2rem;
         line-height: 1.4454rem;
-        text-align: center;
     }
 }
 
@@ -10,7 +9,7 @@
     max-width: 300px;
     display: block;
     opacity: .8;
-    margin: 1.16rem 0;
+    margin: 0.58rem 0;
 }
 
 .sb {
@@ -51,12 +50,44 @@
         color: #000 !important;
         opacity: .5;
     }
+
+    .radio {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.58rem;
+        width: 100%;
+        border: 1px solid #E3E8EE;
+        background: #F7FAFC;
+        border-radius: 5px;
+        padding: 1.16rem;
+        
+        input {
+            width: auto;
+            margin: 0;
+        }
+
+        div {
+            display: inline;
+        }
+
+        &.active {
+            border-color: #d0d0d0;
+            background: #E3E8EE;
+        }        
+
+        &:hover {
+            cursor: pointer;
+            border-color: #d0d0d0;
+            background: #E3E8EE;
+        }
+    }
 }
 
 .modalAction {
     border-radius: 0.5rem;
     padding: 0.87rem;
-    background: #f3f5f7;
+    background: #F7FAFC;
     width: 100%;
     outline: none;
     border: 0;
@@ -74,6 +105,20 @@
     cursor: wait;
 }
 
+.cancel {
+    margin-bottom: -1.64rem;
+    border: 1px solid #E3E8EE;
+    margin-top: 0;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.rule {
+    opacity: 0.05;
+}
+
 .success {
     background: #5cb85c;
     color: #fff;
@@ -82,6 +127,21 @@
 .errorBtn {
     background: red;
     color: #fff
+}
+
+.reason {
+    font-weight: 500;
+    width: 100%;
+    margin-top: 0.72rem;
+
+    textarea {
+        border: 1px solid #E3E8EE;
+        background: #fff;
+        border-radius: 5px;
+        padding: 0.58rem;
+        display: block;
+        width: 100%;
+    }
 }
 
 .error {

@@ -1,0 +1,28 @@
+.item {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.58rem;
+
+    span {
+        display: block;
+    }
+
+    img {
+        width: 2rem;
+        height: auto;
+        border-radius: 5px;
+    }    
+}
+
+.tooltip {
+    background: #000;
+    color: #fff;
+    padding: 0.58rem;
+    border-radius: 5px;
+}
+
+.trigger:focus, .trigger:focus-visible, .trigger {
+    outline: 0;
+    border: none;
+}

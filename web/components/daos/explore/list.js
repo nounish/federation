@@ -6,6 +6,13 @@ import dynamic from "next/dynamic";
 const Item = dynamic(() => import("./item"), { ssr: false });
 
 export default ({ items }) => {
+  const comingSoon = items
+    .map((item, i) => {
+      if (item.released) return null;
+      return <Item key={i} {...item} daoKey={item.key} soon />;
+    })
+    .filter((f) => f);
+
   return (
     <>
       <div className={styles.mast}>
@@ -13,10 +20,19 @@ export default ({ items }) => {
         <span>Discover communities that have integrated Federation to manage external governance.</span>
       </div>
       <div className={styles.daos}>
-        {items.map((item, i) => {
-          return <Item key={i} {...item} daoKey={item.key} />;
-        })}
+        {items
+          .map((item, i) => {
+            if (!item.released) return null;
+            return <Item key={i} {...item} daoKey={item.key} />;
+          })
+          .filter((f) => f)}
       </div>
+      {comingSoon.length ? (
+        <div className={`${styles.daos}`}>
+          <span className={styles.cs}>Coming Soon</span>
+          <div className={styles.soon}>{comingSoon}</div>
+        </div>
+      ) : null}
     </>
   );
 };
