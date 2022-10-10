@@ -31,7 +31,7 @@ export default () => {
 
   return (
     <ParentDAOContext.Provider value={d}>
-      <Layout title={`Federation - ${d.name}`} hasBreadCrumbs>
+      <Layout title={d.displayName} hasBreadCrumbs>
         <List props={proposals} dao={d} fedMeta={fedMeta} />
       </Layout>
     </ParentDAOContext.Provider>

@@ -4,6 +4,7 @@ const promptjs = require("prompt");
 task("deploy", "deploys a new federation contract")
   .addParam("t", "governance token")
   .addParam("d", "dao logic address (not treasury)")
+  .addOptionalParam("fq", "fixedQuorum", -1, types.int)
   .addOptionalParam("v", "vetoer", address(0), types.string)
   .addOptionalParam("w", "exec window in blocks (default 2500)", 2500, types.int)
   .setAction(async (args, { ethers, config }) => {
@@ -20,6 +21,11 @@ task("deploy", "deploys a new federation contract")
     if (!ethers.utils.isAddress(args.d) && args.d !== address(0)) {
       console.log("DAO address is not valid");
       return;
+    }
+
+    const isFixedQuorum = args.fq >= 0;
+    if (isFixedQuorum) {
+      console.log("Using fixed quorum delegate", "quorum: " + args.fq);
     }
 
     let gasPrice = await ethers.provider.getGasPrice();
@@ -40,9 +46,14 @@ task("deploy", "deploys a new federation contract")
     ]);
 
     const deployArgs = [args.v, args.t, args.d, args.w];
+    if (isFixedQuorum) {
+      deployArgs.push(args.fq);
+    }
+
     gasPrice = ethers.utils.parseUnits(result.gasPrice.toString(), "gwei");
 
-    const factory = await ethers.getContractFactory("Delegate");
+    const type = isFixedQuorum ? "DelegateFixedQuorum" : "Delegate";
+    const factory = await ethers.getContractFactory(type);
     const deploymentGas = await factory.signer.estimateGas(
       factory.getDeployTransaction(...(deployArgs.map((a) => (typeof a === "function" ? a() : a)) ?? []), {
         gasPrice,

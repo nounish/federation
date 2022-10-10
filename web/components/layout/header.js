@@ -20,6 +20,11 @@ export default () => {
             </Link>
           </li>
           <li>
+            <Link href="/faq">
+              <a>FAQ</a>
+            </Link>
+          </li>
+          <li>
             <a href="https://twitter.com/0xWiz_" target="_blank">
               <Twitter width={20} height={20} />
             </a>

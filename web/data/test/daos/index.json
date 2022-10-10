@@ -3,8 +3,10 @@
     "displayName": "Nouns",
     "name": "Nouns",
     "key": "nouns",
+    "img": "/static/img/daos/nouns.png",
     "website": "https://nouns.wtf",
     "dao": "https://nouns.wtf/vote/",
+    "released": true,
     "ind": "gold",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -31,8 +33,10 @@
     "displayName": "Lil Nouns",
     "name": "Lil Nouns",
     "key": "lil-nouns",
+    "img": "/static/img/daos/lil-nouns.png",
     "website": "https://lilnouns.wtf",
     "dao": "https://lilnouns.wtf/vote/",
+    "released": true,
     "ind": "blue",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -57,8 +61,10 @@
     "displayName": "Pico Nouns",
     "name": "Pico Nouns",
     "key": "pico-nouns",
+    "img": "/static/img/daos/nouns.png",
     "website": "https://piconouns.wtf",
     "dao": "https://piconouns.wtf/vote/",
+    "released": true,
     "ind": "purple",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {

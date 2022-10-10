@@ -19,12 +19,14 @@ export default ({ hasBreadCrumbs = false }) => {
         <nav>
           <ul>
             <li>
-              <Link href="/faq">
-                <a>FAQ</a>
+              <Link href="/daos">
+                <a>Explore</a>
               </Link>
             </li>
             <li>
-              <ConnectButton />
+              <Link href="/faq">
+                <a>FAQ</a>
+              </Link>
             </li>
           </ul>
         </nav>

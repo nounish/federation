@@ -33,7 +33,7 @@ const randomInt = (min, max) => {
 };
 
 // setupLargeNetwork deploys many networked Nouns instances (NFT + governance) as well as their Federation delegates
-// to be used local testing. allows setting a custom vetoer for test purposes
+// to be used local testing. allows setting a custom vetoer for test purposes. Last nounish uses DelegateFixedQuorum
 const setupLargeNetwork = async function (vetoer = "", n = 3) {
   const [owner, m1, m2, m3, m4, m5] = await ethers.getSigners();
   const daoMembers = [m1, m2, m3, m4, m5];
@@ -41,13 +41,15 @@ const setupLargeNetwork = async function (vetoer = "", n = 3) {
   let daos = {};
   for (let i = 1; i <= n; i++) {
     const nounish = await deployNounish(owner, 50);
-    const Delegate = await ethers.getContractFactory("Delegate");
-    const fDelegate = await Delegate.deploy(
-      vetoer || owner.address,
-      nounish.token.address,
-      nounish.delegate.address,
-      2500
-    );
+    const type = i == n ? "DelegateFixedQuorum" : "Delegate";
+    const Delegate = await ethers.getContractFactory(type);
+
+    const args = [vetoer || owner.address, nounish.token.address, nounish.delegate.address, 2500];
+    if (type === "DelegateFixedQuorum") {
+      args.push(5);
+    }
+
+    const fDelegate = await Delegate.deploy(...args);
 
     nounish.federation = fDelegate;
     daos[`n${i}`] = { nounish };

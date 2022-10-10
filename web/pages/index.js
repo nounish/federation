@@ -4,7 +4,7 @@ import Marquee from "../components/home/marquee";
 
 export default () => {
   return (
-    <Layout title="federation.wtf">
+    <Layout title="Federation ⌐◨-◨">
       <Hero />
       <div style={{ position: "relative" }}>
         <Marquee />

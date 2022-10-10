@@ -18,36 +18,35 @@ const parsePropIDFromCreatedLog = (contract, logs = []) => {
   return 0;
 };
 
-export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title }) => {
+export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title, txType }) => {
   const p = useProvider();
   const parentDAO = useContext(ParentDAOContext);
   const { data, error, isLoading, isSuccess } = useWaitForTransaction({ hash: activeTx.hash });
   const setProposalProposed = useStore((state) => state.setProposalProposed);
-  const refreshProposal = useStore((state) => state.refreshProposal);
   const daoIndex = useDAOIndex();
 
   // update proposal state in store when the tx is confirmed
   useEffect(() => {
-    if (isSuccess) {
-      const fn = async () => {
-        const c = new ethers.Contract(data.to, FDelegateABI, p);
-        const pID = parsePropIDFromCreatedLog(c, data.logs);
-        if (!pID) {
-          console.error("could not parse proposal id from logs");
-          return;
-        }
+    if (!isSuccess) return;
 
-        await setProposalProposed(parentDAO.key, pID, eDAOKey, eID);
+    const fn = async () => {
+      if (txType == "execute") return;
 
-        refreshProposal(parentDAO.key, pID, eDAOKey, eID, p);
-      };
-
-      try {
-        fn();
-      } catch (err) {
-        // TODO :- error handling
-        console.error(err);
+      const c = new ethers.Contract(data.to, FDelegateABI, p);
+      const pID = parsePropIDFromCreatedLog(c, data.logs);
+      if (!pID) {
+        console.error("could not parse proposal id from logs");
+        return;
       }
+
+      await setProposalProposed(parentDAO.key, pID, eDAOKey, eID);
+    };
+
+    try {
+      fn();
+    } catch (err) {
+      // TODO :- error handling
+      console.error(err);
     }
   }, [isSuccess]);
 
@@ -67,11 +66,16 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title }) => {
     return 0;
   };
 
-  const st = determineState(isLoading, isSuccess, error);
+  const st = determineState();
 
   return (
     <form
       onSubmit={async (e) => {
+        if (st === 0) {
+          e.preventDefault();
+          return;
+        }
+
         e.preventDefault();
         setOpen(false);
         onFinished();
@@ -96,7 +100,7 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title }) => {
         </span>
         <div className={styles.meta}>
           <label className={styles.txDesc}>
-            <span>Start Vote</span>
+            {txType == "execute" ? <span>Execute Vote</span> : <span>Start Vote</span>}
             <div
               className={(() => {
                 switch (st) {

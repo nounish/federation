@@ -8,8 +8,6 @@ setMulticallAddress(31337, "0xB377a2EeD7566Ac9fCb0BA673604F9BF875e2Bab");
 
 export const getDAOProposalCreatedLogs = async (address, provider, queryFromBlock = 0) => {
   const nd = new ethers.Contract(address, NounishDAOABI, provider);
-  const block = await provider.getBlock("latest");
-  const blockNumber = ethers.BigNumber.from(block.number);
 
   const qf = {
     ...nd.filters.ProposalCreated(null, null, null, null, null, null, null, null, null),
@@ -21,17 +19,12 @@ export const getDAOProposalCreatedLogs = async (address, provider, queryFromBloc
     .map((l) => {
       const p = l.args;
 
-      // skip expired proposals
-      if (p.endBlock.gt(blockNumber)) {
-        return {
-          id: p.id,
-          description: p.description,
-          startBlock: p.startBlock,
-          endBlock: p.endBlock,
-        };
-      }
-
-      return null;
+      return {
+        id: p.id,
+        description: p.description,
+        startBlock: p.startBlock,
+        endBlock: p.endBlock,
+      };
     })
     .filter((f) => f);
 
@@ -70,46 +63,30 @@ export const getDAOProposals = async (ids = [], address, provider) => {
 };
 
 // get active proposals in federation by dao and prop id
-export const getFedProposalCreatedLogs = async (address, provider, eDAOAddress, eProps = [], queryFromBlock = 0) => {
+export const getFedProposalCreatedLogs = async (address, provider, eDAOAddress, queryFromBlock = 0) => {
   const nd = new ethers.Contract(address, FedDelegateABI, provider);
-  const block = await provider.getBlock("latest");
-  const blockNumber = ethers.BigNumber.from(block.number);
 
-  let props = [];
-  for (let i = 0; i < eProps.length; i++) {
-    const prop = eProps[i];
+  const qf = {
+    ...nd.filters.ProposalCreated(null, null, eDAOAddress, null, null, null, null),
+    fromBlock: queryFromBlock,
+  };
 
-    const qf = {
-      ...nd.filters.ProposalCreated(null, null, eDAOAddress, prop, null, null, null),
-      fromBlock: queryFromBlock,
+  const logs = await nd.queryFilter(qf);
+  const ps = logs.map((l) => {
+    const p = l.args;
+
+    return {
+      id: p.id,
+      proposer: p.proposer,
+      eDAO: p.eDAO,
+      ePropID: p.ePropID,
+      startBlock: p.startBlock,
+      endBlock: p.endBlock,
+      quorumVotes: p.quorumVotes,
     };
+  });
 
-    const logs = await nd.queryFilter(qf);
-    const ps = logs
-      .map((l) => {
-        const p = l.args;
-
-        // skip expired proposals
-        if (p.endBlock.gt(blockNumber)) {
-          return {
-            id: p.id,
-            proposer: p.proposer,
-            eDAO: p.eDAO,
-            ePropID: p.ePropID,
-            startBlock: p.startBlock,
-            endBlock: p.endBlock,
-            quorumVotes: p.quorumVotes,
-          };
-        }
-
-        return null;
-      })
-      .filter((f) => f);
-
-    props = props.concat(ps);
-  }
-
-  return props;
+  return ps;
 };
 
 export const getFedMeta = async (address, provider) => {

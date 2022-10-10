@@ -19,6 +19,11 @@ export default (props) => {
   }, []);
 
   const handleClick = (e) => {
+    if (props.soon) {
+      e.preventDefault();
+      return;
+    }
+
     if (e.target.tagName === "A") {
       e.preventDefault();
       window.open(e.target.href, "_blank");
@@ -27,12 +32,13 @@ export default (props) => {
 
   return (
     <Link href={`/daos/${props.daoKey}`}>
-      <span onClick={handleClick} className={styles.sp}>
+      <span onClick={handleClick} className={props.soon ? `${styles.sp} ${styles.soon}` : `${styles.sp}`}>
         <div className={styles.item}>
           <div>
             <h2>{props.displayName}</h2>
+            <span className={styles.description}>{props.description}</span>
             <div className="details">
-              <ul>
+              <ul style={{ padding: "0" }}>
                 <li>Ξ {treasuryBalance}</li>
                 <li className={styles.external}>
                   <a href={props.website} target="_blank">

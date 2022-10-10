@@ -1,0 +1,21 @@
+.w {
+    background: #E3E8EE;
+    border: 1px solid #d0d0d0;
+    border-radius: 0.5rem;
+    padding: 1.16rem 1.32rem;
+    margin: 0 auto 1.16rem auto;
+    max-width: 600px;
+
+    h4 {
+        margin: 0.58rem 0;
+        font-size: 96%;
+    }
+}
+
+.network {
+    display: flex;
+    gap: 0.58rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
