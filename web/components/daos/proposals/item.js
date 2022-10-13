@@ -5,8 +5,9 @@ import Actions from "./actions";
 import { Users } from "react-feather";
 import useDAOIndex from "../../../hooks/daoData";
 
-const Support = ({ forVotes, againstVotes, abstainVotes }) => {
-  let s = "";
+const GetState = ({ forVotes, againstVotes, abstainVotes }) => {
+  let s = "Undecided";
+
   if (abstainVotes > forVotes && abstainVotes > againstVotes) {
     s = "Abstain";
   }
@@ -19,6 +20,11 @@ const Support = ({ forVotes, againstVotes, abstainVotes }) => {
     s = "For";
   }
 
+  return s;
+};
+
+const Support = (props) => {
+  const s = GetState(props);
   return <span className={`${styles.support} ${styles[s.toLowerCase()]}`}>{s}</span>;
 };
 
@@ -38,7 +44,9 @@ export default (props) => {
     if (props.proposed) {
       if (props.votes >= props.quorumVotes && props.votes > 0) {
         if (props.fedMeta.currentBlock >= props.endBlock - props.fedMeta.execWindow) {
-          return true;
+          if (GetState(props) !== "Undecided") {
+            return true;
+          }
         }
       }
     }
@@ -61,7 +69,11 @@ export default (props) => {
               <Proposer addr={props.eProposer} />
             </div>
             <div className={styles.quorum}>
-              {!props.executed && props.proposed ? <Quorum quorumVotes={props.quorumVotes} /> : <Support {...props} />}
+              {!props.executed && props.proposed ? (
+                <Quorum quorumVotes={props.quorumVotes} />
+              ) : props.proposed ? (
+                <Support {...props} />
+              ) : null}
             </div>
           </div>
           <span className={styles.time}>
