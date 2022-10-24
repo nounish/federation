@@ -32,6 +32,39 @@ const randomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+// setupMultiTokenNetwork deploys two networked Nouns instances (NFT + governance) as well as multi-token
+// Federation delegates to be used for each test run.
+// allows setting a custom vetoer for test purposes
+const setupMultiTokenNetwork = async function (vetoer, weights = [1, 1]) {
+  const [owner] = await ethers.getSigners();
+
+  const nounish = await deployNounish(owner);
+  const nounishTwo = await deployNounish(owner);
+
+  // third nounish doesn't require a fed delegate. it's only used to
+  // test multi-token governance
+  const nounishThree = await deployNounish(owner);
+
+  // deploy a federation delegate for each nounish instance
+  const Delegate = await ethers.getContractFactory("DelegateMultiToken");
+
+  const fDelegate = await Delegate.deploy((vetoer || owner).address, 2500, 500);
+  const fDelegateTwo = await Delegate.deploy((vetoer || owner).address, 2500, 500);
+
+  await fDelegate
+    .connect(vetoer || owner)
+    ._setNounishTokens([nounish.token.address, nounishTwo.token.address], weights);
+
+  await fDelegateTwo
+    .connect(vetoer || owner)
+    ._setNounishTokens([nounish.token.address, nounishTwo.token.address], weights);
+
+  nounish.federation = fDelegate;
+  nounishTwo.federation = fDelegateTwo;
+
+  return { n1: nounish, n2: nounishTwo, n3: nounishThree };
+};
+
 // setupLargeNetwork deploys many networked Nouns instances (NFT + governance) as well as their Federation delegates
 // to be used local testing. allows setting a custom vetoer for test purposes. Last nounish uses DelegateFixedQuorum
 const setupLargeNetwork = async function (vetoer = "", n = 3) {
@@ -176,4 +209,5 @@ module.exports = {
   makeProposal,
   randomInt,
   setupLargeNetwork,
+  setupMultiTokenNetwork,
 };

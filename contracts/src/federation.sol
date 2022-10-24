@@ -7,7 +7,7 @@
 
 // Built by wiz ⌐◨-◨ ☆ﾟ. * ･ ｡ﾟ
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.17;
 
 import {NounsDAOStorageV1} from "./external/nouns/governance/NounsDAOInterfaces.sol";
 
@@ -104,6 +104,16 @@ contract DelegateEvents {
 
     /// @notice Emitted when exec window is changed
     event NewExecWindow(uint256 oldExecWindow, uint256 newExecWindow);
+
+    event NewQuorumBPS(
+        uint256 oldQuorumBPS,        
+        uint256 newQuorumBPS
+    );
+
+    event TokensChanged(
+        address[] newTokens,
+        uint256[] weights
+    );
 }
 
 interface INounsDAOGovernance {

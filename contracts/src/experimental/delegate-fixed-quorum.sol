@@ -4,29 +4,32 @@
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {NounsTokenLike, NounsDAOStorageV1} from "./external/nouns/governance/NounsDAOInterfaces.sol";
-import "./federation.sol";
+import {NounsTokenLike, NounsDAOStorageV1} from "../external/nouns/governance/NounsDAOInterfaces.sol";
+import "../federation.sol";
 
 pragma solidity ^0.8.17;
 
-contract Delegate is DelegateEvents {
+contract DelegateFixedQuorum is DelegateEvents {
     /// @notice The name of this contract
-    string public constant name = "federation";
+    string public constant name = "federation fixed quorum";
 
-    /// @notice the address of the vetoer
+    /// @notice The address of the vetoer
     address public vetoer;    
 
-    /// @notice the address of the controlling DAO logic contract
+    /// @notice The address of the controlling DAO logic contract
     NounsDAOStorageV1 public ownerDAO;
 
-    /// @notice the address of the token that governs the owner DAO
+    /// @notice The address of the token that governs the owner DAO
     NounsTokenLike public nounishToken;
 
     /// @notice The total number of delegate actions proposed
     uint256 public proposalCount;
 
-    /// @notice the window in blocks that a proposal which has met quorum can be executed
+    /// @notice The window in blocks that a proposal which has met quorum can be executed
     uint256 public execWindow;
+
+    /// @notice The default quorum for all proposals
+    uint256 public quorum;
 
     /// @notice The official record of all delegate actions ever proposed
     mapping(uint256 => DelegateAction) public proposals;
@@ -35,44 +38,28 @@ contract Delegate is DelegateEvents {
     mapping(address => uint256) public latestProposalIds;
 
     /**
-     * @param nounishToken_ The address of the Nounish tokens that govern the owner DAO
-     * @param ownerDAO_ The address of the external Nounish DAO
-     * @param execWindow_ The window in blocks that a proposal which has met quorum can be executed
+     * @param _nounishToken The address of the Nounish tokens that govern the owner DAO
+     * @param _ownerDAO The address of the external Nounish DAO
+     * @param _execWindow The window in blocks that a proposal which has met quorum can be executed
+     * @param _quorum Fixed quorum for proposal
      */
-    constructor(address _vetoer, address nounishToken_, NounsDAOStorageV1 ownerDAO_, uint256 execWindow_) {
+    constructor(address _vetoer, address _nounishToken, NounsDAOStorageV1 _ownerDAO, uint256 _execWindow, uint256 _quorum) {
         require(
-            address(ownerDAO_) != address(0),
+            address(_ownerDAO) != address(0),
             "invalid owner dao address"
         );
 
         require(
-            nounishToken_ != address(0),
+            _nounishToken != address(0),
             "invalid nounish NFT address"
         );
 
-        nounishToken = NounsTokenLike(nounishToken_);
-        ownerDAO = ownerDAO_;
-        execWindow = execWindow_;
+        nounishToken = NounsTokenLike(_nounishToken);
+        ownerDAO = _ownerDAO;
+        execWindow = _execWindow;
         vetoer = _vetoer;
-    }
-
-    function _externalProposal(NounsDAOStorageV1 eDAO, uint256 ePropID) public view returns (uint256) {
-        (,,,,,, uint256 ePropEndBlock,,,,,,) = eDAO.proposals(
-            ePropID
-        );
-
-        return ePropEndBlock;
-    }
-
-    function _alreadyProposed(address eDAO, uint256 ePropID) public view returns (bool) {
-        for (uint i=1; i <= proposalCount; i++){
-            if (proposals[i].eDAO == eDAO && proposals[i].eID == ePropID) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+        quorum = _quorum;
+    }    
 
     /**
      * @notice Function used to propose a new proposal. Sender must have delegates above the proposal threshold
@@ -125,10 +112,7 @@ contract Delegate is DelegateEvents {
         newProposal.eID = ePropID;
         newProposal.eDAO = address(eDAO);
         newProposal.proposer = msg.sender;
-        newProposal.quorumVotes = bps2Uint(
-            ownerDAO.quorumVotesBPS(),
-            nounishToken.totalSupply()
-        );
+        newProposal.quorumVotes = quorum;
 
         /// @notice immediately open proposal for voting
         newProposal.startBlock = block.number;
@@ -325,6 +309,31 @@ contract Delegate is DelegateEvents {
     }
 
     /**
+     * @notice Helper function that parses end block from external proposals.
+     */ 
+    function _externalProposal(NounsDAOStorageV1 eDAO, uint256 ePropID) public view returns (uint256) {
+        (,,,,,, uint256 ePropEndBlock,,,,,,) = eDAO.proposals(
+            ePropID
+        );
+
+        return ePropEndBlock;
+    }
+
+    /**
+     * @notice Helper function that determines if an external proposal has already been opened
+     * for vote
+     */ 
+    function _alreadyProposed(address eDAO, uint256 ePropID) public view returns (bool) {
+        for (uint i=1; i <= proposalCount; i++){
+            if (proposals[i].eDAO == eDAO && proposals[i].eID == ePropID) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @notice Changes proposal exec window
      * @dev function for updating the exec window of a proposal
      */
@@ -355,12 +364,5 @@ contract Delegate is DelegateEvents {
         emit NewVetoer(vetoer, newVetoer);
 
         vetoer = newVetoer;
-    }
-
-    /**
-     * @dev Helper function for converting bps
-     */
-    function bps2Uint(uint256 bps, uint256 number) internal pure returns (uint256) {
-        return (number * bps) / 10000;
     }
 }
