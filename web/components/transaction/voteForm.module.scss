@@ -105,6 +105,14 @@
     cursor: wait;
 }
 
+.disabled {
+    border: 1px solid #E3E8EE;
+
+    &:hover {
+        cursor: not-allowed;
+    }
+}
+
 .cancel {
     margin-bottom: -1.64rem;
     border: 1px solid #E3E8EE;
