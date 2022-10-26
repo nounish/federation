@@ -7,6 +7,7 @@
     "website": "https://nouns.wtf",
     "dao": "https://nouns.wtf/vote/",
     "released": true,
+    "multiToken": false,
     "ind": "gold",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -37,6 +38,7 @@
     "website": "https://lilnouns.wtf",
     "dao": "https://lilnouns.wtf/vote/",
     "released": true,
+    "multiToken": false,
     "ind": "blue",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -65,6 +67,7 @@
     "website": "https://piconouns.wtf",
     "dao": "https://piconouns.wtf/vote/",
     "released": true,
+    "multiToken": false,
     "ind": "purple",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -84,6 +87,37 @@
       },
       {
         "key": "lil-nouns"
+      }
+    ],
+    "proposals": []
+  },
+  "gnars": {
+    "displayName": "Gnars DAO",
+    "name": "Gnars DAO",
+    "key": "gnars",
+    "img": "/static/img/daos/gnars.png",
+    "website": "https://gnars.wtf",
+    "dao": "https://snapshot.org/#/gnars.eth",
+    "released": true,
+    "multiToken": {
+      "tokens": ["0xD0141E899a65C95a556fE2B27e5982A6DE7fDD7A", "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3"],
+      "weights": [2, 1]
+    },
+    "ind": "black",
+    "etherscan": "https://etherscan.io/tokenholdings?a=0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
+    "addresses": {
+      "dao": "0xc582Bc0317dbb0908203541971a358c44b1F3766",
+      "treasury": "0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
+      "federation": "0xefAB0Beb0A557E452b398035eA964948c750b2Fd"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "mainnetBirthBlock": 0,
+    "fedBirthBlock": 0,
+    "network": [
+      {
+        "key": "nouns"
       }
     ],
     "proposals": []

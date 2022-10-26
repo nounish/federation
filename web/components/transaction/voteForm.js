@@ -14,6 +14,7 @@ import ParentDAOContext from "../../hooks/context/parentDAO";
 import FedDelegateABI from "../../abi/f-delegate.json";
 import NounishTokenABI from "../../abi/nounish-token.json";
 import { parseError } from "../../lib/strings";
+import useUserVotes from "../../hooks/votes/useUserVotes";
 
 export default (props) => {
   const [submittedTx, setSubmittedTx] = useState(null);
@@ -46,12 +47,7 @@ const CastVote = (props) => {
   const [reason, setReason] = useState("");
   const [support, setSupport] = useState(props.activeTx.support);
 
-  const { data: votes, isError: priorVotesErr } = useContractRead({
-    addressOrName: props.parentDAO.addresses.token,
-    contractInterface: NounishTokenABI,
-    functionName: "getPriorVotes",
-    args: [account.address, props.startBlock - 1],
-  });
+  const { votes, err: priorVotesErr } = useUserVotes(props.parentDAO)(account.address, props.startBlock - 1);
 
   const { config, err } = usePrepareContractWrite({
     addressOrName: props.parentDAO.addresses.federation,
@@ -75,7 +71,8 @@ const CastVote = (props) => {
     setReason(e.target.value);
   };
 
-  const n = votes?.toNumber();
+  const n = votes?.toNumber() || 0;
+  const isDisabled = err || n === 0;
 
   return (
     <form onSubmit={props.handleCastVote.bind(this, castVote, support)}>
@@ -111,7 +108,11 @@ const CastVote = (props) => {
       >
         Cancel
       </button>
-      <button type="submit" className={`${styles.modalAction} ${styles.success}`} disabled={err}>
+      <button
+        type="submit"
+        className={isDisabled ? `${styles.modalAction} ${styles.disabled}` : `${styles.modalAction} ${styles.success}`}
+        disabled={isDisabled}
+      >
         Submit Transaction
       </button>
       {err || priorVotesErr ? (

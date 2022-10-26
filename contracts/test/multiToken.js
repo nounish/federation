@@ -589,7 +589,7 @@ describe("Federation Multi-Token", function () {
         expect(receiptRando.support).to.equal(ethers.BigNumber.from("2"));
       });
 
-      it.only("should allow voting with multiple tokens and weights from a single caller", async function () {
+      it("should allow voting with multiple tokens and weights from a single caller", async function () {
         const [owner] = await ethers.getSigners();
         const { n1, n2, n3 } = await setup(null, weights);
 

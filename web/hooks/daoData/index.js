@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import TestData from "../../data/test/daos/index.json";
 import MainnetData from "../../data/mainnet/daos/index.json";
 

@@ -233,6 +233,10 @@ const ensureNested = async (key, get, set) => {
     merge = true;
   }
 
+  if (!_.isEqual(d.multiToken, DAOIndex[key].multiToken)) {
+    merge = true;
+  }
+
   if (merge) {
     console.log("merging state");
     const nState = { [key]: _.merge(d, DAOIndex[key]) };
