@@ -341,7 +341,9 @@ describe("Federation Multi-Token", function () {
       r = await n1.federation.getReceipt(1, owner.address);
       expect(r.hasVoted).to.be.true;
 
-      const weight = await n1.federation.tokenVotingWeights(0);
+      const t1 = await n1.federation.nounishTokens(0);
+      const weight = t1.weight;
+
       const prop = await n1.federation.proposals(1);
 
       expect(r.votes).to.equal(prop.forVotes);
@@ -514,8 +516,9 @@ describe("Federation Multi-Token", function () {
         const { n1, n2 } = await setup(vetoer, weights);
         const tokens = [n1.token.address, n2.token.address];
 
-        await expect(n1.federation.connect(vetoer)._setNounishTokens(tokens, weights)).not.to.be.reverted;
-        await expect(n1.federation._setNounishTokens(tokens, weights)).to.be.reverted;
+        await expect(n1.federation.connect(vetoer)._setNounishTokens(tokens, weights, [true, false])).not.to.be
+          .reverted;
+        await expect(n1.federation._setNounishTokens(tokens, weights, [true, false])).to.be.reverted;
       });
     });
 
@@ -568,8 +571,11 @@ describe("Federation Multi-Token", function () {
         await makeProposal(n1, n3);
 
         // ensure that we can vote on Federation with both tokens
-        const weightn1 = await n1.federation.tokenVotingWeights(0);
-        const weightn2 = await n1.federation.tokenVotingWeights(1);
+        const t1 = await n1.federation.nounishTokens(0);
+        const t2 = await n1.federation.nounishTokens(1);
+
+        const weightn1 = t1.weight;
+        const weightn2 = t2.weight;
 
         // owner only has n2 tokens. let's get their balance and ensure
         // votes cast == balance * weight
@@ -598,8 +604,12 @@ describe("Federation Multi-Token", function () {
 
         await makeProposal(n1, n3);
 
-        const weightn1 = await n1.federation.tokenVotingWeights(0);
-        const weightn2 = await n1.federation.tokenVotingWeights(1);
+        const t1 = await n1.federation.nounishTokens(0);
+        const t2 = await n1.federation.nounishTokens(1);
+
+        const weightn1 = t1.weight;
+        const weightn2 = t2.weight;
+
         const wb1 = n1Balance.mul(weightn1);
         const wb2 = n2Balance.mul(weightn2);
 

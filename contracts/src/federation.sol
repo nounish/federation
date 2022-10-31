@@ -112,7 +112,8 @@ contract DelegateEvents {
 
     event TokensChanged(
         address[] newTokens,
-        uint256[] weights
+        uint256[] weights,
+        bool[] useERC721Balance
     );
 }
 

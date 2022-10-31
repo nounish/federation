@@ -32,14 +32,11 @@ contract DelegateMultiToken is DelegateEvents {
     mapping(address => uint256) public latestProposalIds;
 
     /// @notice A mapping of valid tokens providing representation in the DAO
-    mapping(uint256 => NounsTokenLike) public nounishTokens;    
+    mapping(uint256 => MultiToken) public nounishTokens;    
 
     /// @notice Size of the nounishTokens list
     uint256 public nounishTokensSize;
-
-    /// @notice A mapping of token voting weights
-    mapping(uint256 => uint256) public tokenVotingWeights;
-
+    
     /**
      * @param _vetoer The address that can manage this contract and veto props
      * @param _execWindow The window in blocks that a proposal which has met quorum can be executed
@@ -346,17 +343,29 @@ contract DelegateMultiToken is DelegateEvents {
         vetoer = newVetoer;
     }
 
+    /// @notice Structure of MultiToken data
+    struct MultiToken {
+        /// @notice use erc721 balance for caller when calculating vote representation
+        bool useERC721Balance;
+        /// @notice the address of the NounishToken
+        address token;                
+        /// @notice voting weight given to token
+        uint256 weight;
+    }
+
     /**
      * @notice Sets tokens to be used for governing this delegate
      */ 
-    function _setNounishTokens(address[] calldata _nounishTokens, uint256[] calldata _weights) external {
+    function _setNounishTokens(address[] calldata _nounishTokens, uint256[] calldata _weights, bool[] calldata _useERC721Balance) external {
         require(msg.sender == vetoer, "vetoer only");
 
-        emit TokensChanged(_nounishTokens, _weights);
+        emit TokensChanged(_nounishTokens, _weights, _useERC721Balance);
 
         for (uint256 i = 0; i < _nounishTokens.length; i += 1) {
-            nounishTokens[i] = NounsTokenLike(_nounishTokens[i]);
-            tokenVotingWeights[i] = _weights[i];
+            MultiToken storage mt = nounishTokens[i];
+            mt.token = _nounishTokens[i];
+            mt.weight = _weights[i];
+            mt.useERC721Balance = _useERC721Balance[i];
         }
 
         nounishTokensSize = _nounishTokens.length;
@@ -369,7 +378,16 @@ contract DelegateMultiToken is DelegateEvents {
         uint96 votes = 0;
 
         for (uint256 i = 0; i < nounishTokensSize; i += 1) {
-            votes += nounishTokens[i].getPriorVotes(sender, startBlock) * uint96(tokenVotingWeights[i]);            
+            MultiToken memory mt = nounishTokens[i];
+            if (mt.useERC721Balance) {
+                votes += uint96(
+                    IERC721(
+                        nounishTokens[i].token
+                    ).balanceOf(sender) * nounishTokens[i].weight
+                );            
+            } else {
+                votes += NounsTokenLike(nounishTokens[i].token).getPriorVotes(sender, startBlock) * uint96(nounishTokens[i].weight);            
+            }
         }
 
         return votes;
@@ -382,7 +400,7 @@ contract DelegateMultiToken is DelegateEvents {
         uint256 supply = 0;
 
         for (uint256 i = 0; i < nounishTokensSize; i += 1) {
-            supply += nounishTokens[i].totalSupply();
+            supply += NounsTokenLike(nounishTokens[i].token).totalSupply();
         }
 
         return supply;
