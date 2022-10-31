@@ -11,21 +11,21 @@ task("deployMultiToken", "deploys a new federation multi-token delegate contract
 
     const tokens = [];
     const weights = [];
+    let fallback = [];
 
     if (args.tokensAndWeights.length % 2 === 0) {
-      for (let i = 0; i < args.tokensAndWeights.length; i++) {
-        if (i % 2 === 0) {
-          tokens.push(args.tokensAndWeights[i]);
-          continue;
-        }
-
-        weights.push(args.tokensAndWeights[i]);
+      const len = args.tokensAndWeights.length;
+      for (let i = 0; i < len / 3; i++) {
+        tokens.push(args.tokensAndWeights.shift());
+        weights.push(args.tokensAndWeights.shift());
+        fallback.push(args.tokensAndWeights.shift());
       }
 
-      console.log({ tokens, weights });
+      fallback = fallback.map((f) => f === "true");
+      console.log({ tokens, weights, fallback });
     } else {
       console.log(
-        "Tokens must be passed with corresponding weight after all flags. i.e. `npx hardhat deployMultiToken --qbps 500 <token-addy> 2 <token-addy> 1`"
+        "Tokens must be passed with corresponding weight after all flags. i.e. `npx hardhat deployMultiToken --qbps 500 <token-addy> 2 false <token-addy> 1 true`"
       );
       return;
     }
@@ -85,7 +85,7 @@ task("deployMultiToken", "deploys a new federation multi-token delegate contract
 
     await deployedContract.deployed();
 
-    await deployedContract._setNounishTokens(tokens, weights);
+    await deployedContract._setNounishTokens(tokens, weights, fallback);
 
     console.log(`MultiToken Delegate deployed to ${deployedContract.address}`);
   });

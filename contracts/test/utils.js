@@ -53,11 +53,11 @@ const setupMultiTokenNetwork = async function (vetoer, weights = [1, 1]) {
 
   await fDelegate
     .connect(vetoer || owner)
-    ._setNounishTokens([nounish.token.address, nounishTwo.token.address], weights);
+    ._setNounishTokens([nounish.token.address, nounishTwo.token.address], weights, [true, false]);
 
   await fDelegateTwo
     .connect(vetoer || owner)
-    ._setNounishTokens([nounish.token.address, nounishTwo.token.address], weights);
+    ._setNounishTokens([nounish.token.address, nounishTwo.token.address], weights, [true, false]);
 
   nounish.federation = fDelegate;
   nounishTwo.federation = fDelegateTwo;
