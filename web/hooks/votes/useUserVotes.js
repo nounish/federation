@@ -19,7 +19,14 @@ const useUserVotes = (dao) => (address, fromBlock) => {
         for (let i = 0; i < dao.multiToken.tokens.length; i++) {
           const token = new ethers.Contract(dao.multiToken.tokens[i], NounishTokenABI, p);
           const weight = dao.multiToken.weights[i];
+          const fallback = dao.multiToken.fallback[i];
           try {
+            if (fallback) {
+              const rep = await token.balanceOf(address);
+              agg += rep * weight;
+              continue;
+            }
+
             const rep = await token.getPriorVotes(address, fromBlock);
             agg += rep * weight;
           } catch (ex) {
