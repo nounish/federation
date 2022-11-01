@@ -43,3 +43,54 @@ export const Twitter = (props) => {
     </svg>
   );
 };
+
+export const Noggles = (props) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 178 110" fill="none" {...props}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M69.375 39.0625H89.5V79.3125H69.375V39.0625ZM139.812 39.0625H159.938V79.3125H139.812V39.0625Z"
+        fill="#000"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M49.25 39.0625H69.375V79.3125H49.25V39.0625ZM119.688 39.0625H139.812V79.3125H119.688V39.0625Z"
+        fill="white"
+      />
+      <path
+        d="M109.625 29V49.125H99.5625V29H39.1875V49.125H9V79.3125H19.0625V59.1875H39.1875V89.375H99.5625V59.1875H109.625V89.375H170V29H109.625ZM89.5 79.3125H49.25V39.0625H89.5V79.3125ZM159.938 79.3125H119.688V39.0625H159.938V79.3125Z"
+        fill={props.fill}
+      />
+      <path
+        d="M109.625 29V49.125H99.5625V29H39.1875V49.125H9V79.3125H19.0625V59.1875H39.1875V89.375H99.5625V59.1875H109.625V89.375H170V29H109.625ZM89.5 79.3125H49.25V39.0625H89.5V79.3125ZM159.938 79.3125H119.688V39.0625H159.938V79.3125Z"
+        fill={props.fill}
+      />
+      <path
+        d="M109.625 29V49.125H99.5625V29H39.1875V49.125H9V79.3125H19.0625V59.1875H39.1875V89.375H99.5625V59.1875H109.625V89.375H170V29H109.625ZM89.5 79.3125H49.25V39.0625H89.5V79.3125ZM159.938 79.3125H119.688V39.0625H159.938V79.3125Z"
+        fill={props.fill}
+      />
+    </svg>
+  );
+};
+
+export const WizardsDAO = (props) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 11 8" {...props}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        fill="#6117AD"
+        d="M2,6h1h1h1h1h1h1h1V4H8V3H7V1H6V0H2v1H1v2h1V2h1v2H2"
+      />
+      <path fillRule="evenodd" clipRule="evenodd" fill="#F7BC07" d="M1,6h9v1H9H8H7H6H5H4H3H2H1V6z" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        fill="#6117AD"
+        d="M0,7h1h1h1h1h1h1h1h1h1h1h1v1h-1H9H8H7H6H5H4H3H2H1H0V7z"
+      />
+    </svg>
+  );
+};

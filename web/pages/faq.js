@@ -7,25 +7,51 @@ const items = [
   {
     title: "What is Federation?",
     body: `
-    Federation is an on-chain governance tool that enables DAOs in the Nouns ecosystem to vote on each other's proposals.
-    <br/><br/>
-    For example, Lil Nouns DAO purchased Nouns NFTs with their treasury, giving them voting power in NounsDAO. With Federation, members of Lil Nouns DAO can collectively decide how to vote on NounsDAO proposals directly without any human intermediaries.`,
+    Federation is a smart contract and web app that enables DAOs in the Nouns ecosystem to vote on each other's proposals.
+    `,
   },
   {
     title: "How does it work?",
-    body: `Federation operates as an on-chain delegated voter. To get started, voting power is delegated to the Federation contract by your DAO.<br/><br/> Members of the DAO can then vote on the outcome they would like to see for a proposal. Federation will then cast its vote on the proposal based on the outcome that the majority of the DAO members voted for.`,
+    body: `Today, cross-DAO voting is usually done off-chain through Snapshot or Discord polls and then executed by a centralized party through a multi-sig.
+    <br/><br/>
+    Federation removes this centralization risk by operating as an on-chain delegated voter. A Federation contract can be deployed and external voting rights can
+    be delegated to it.
+    <br/><br/>
+    Members of a community can then vote on the outcome they would like to see for an external proposal using
+    Federation's voting interface. The Federation contract will then cast its vote on the proposal
+    based on the outcome that the majority of the DAO members voted for.
+    `,
   },
   {
-    title: "How can my community start using Federation?",
-    body: `We are currently onboarding DAOs in the Nouns ecosystem. If you are part of one and are interested in using Federation to enable on-chain governance between your DAO and others, reach out to <a target="_blank" href="https://twitter.com/0xWiz_">wiz</a> on Twitter.`,
+    title: "What are some use cases?",
+    body: `The most common use case is for DAOs in the Nouns ecosystem (Lil Nouns, Gnars, etc.)
+    who hold Nouns NFTs to vote on Nouns DAO governance. 
+    <br/><br/>
+    Cross-DAO voting allows DAOs in the ecosystem to have a stake in each other’s success while
+    aligning incentives and resources for mutual benefit.
+    <br/><br/>
+    As the ecosystem grows, you can imagine a world where subDAOs vote on each other’s proposals (e.g. Lil Nouns voting on SharkDAO
+    proposals), or even the development of ecosystem-wide political parties.
+    `,
+  },
+  {
+    title: "How can my community sign up?",
+    body: `We are currently onboarding DAOs in the Nouns ecosystem. If you are part of one and are
+    interested in using Federation to enable on-chain governance between your DAO and others,
+    reach out to <a href="https://twitter.com/0xWiz_" target="_blank">wiz</a> on Twitter.`,
   },
   {
     title: "Is Federation open-source?",
     body: `Federation public infrastructure and free to use. The codebase is entirely open-source and available on <a target="_blank" href="https://github.com/nounish/federation">GitHub</a>.`,
   },
   {
-    title: "What are Nouns?",
-    body: `NounsDAO is an onchain governance experiment where NFTs represent membership to the DAO. To learn more about NounsDAO visit their website at <a target="_blank" href="https://nouns.wtf">nouns.wtf</a>`,
+    title: "Wait... but what are Nouns?",
+    body: `Nouns is a Decentralized Autonomous Organization where one NFT (representing one vote
+    over the allocation of the treasury) is auctioned off each day. 
+    <br/><br/>
+    Nouns DAO exists to proliferate
+    the Nouns meme, and many “forks” of the organization have popped up given its success in
+    developing economically sustainable communities. You can learn more at <a target="_blank" href="https://nouns.wtf">nouns.wtf</a>`,
   },
 ];
 

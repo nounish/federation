@@ -50,17 +50,19 @@ const TextLoop = () => (
 
 export default () => {
   return (
-    <div className={styles.sig}>
-      <div>
-        Federation is Public Infrastructure <TextLoop />
-      </div>
-      <div className={styles.b}>
-        Built by{" "}
-        <a href="https://twitter.com/0xWiz_" target="_blank">
-          wiz ⌐◨-◨
-        </a>
+    <>
+      <div className={styles.sig}>
+        <div>
+          Public Infrastructure <TextLoop />
+        </div>
+        <div className={styles.b}>
+          Built by{" "}
+          <a href="https://twitter.com/0xWiz_" target="_blank">
+            wiz
+          </a>
+        </div>
       </div>
       <div className={`${styles.cs} hidden-mobile`}>Public Beta</div>
-    </div>
+    </>
   );
 };

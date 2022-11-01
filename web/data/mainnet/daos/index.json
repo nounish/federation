@@ -55,6 +55,39 @@
     ],
     "proposals": []
   },
+  "gnars": {
+    "displayName": "Gnars",
+    "description": "A new way to fund extreme athletes.",
+    "name": "Gnars DAO",
+    "key": "gnars",
+    "img": "/static/img/daos/gnars.png",
+    "website": "https://gnars.wtf",
+    "dao": "https://snapshot.org/#/gnars.eth",
+    "released": true,
+    "multiToken": {
+      "tokens": ["0x494715b2a3c75dadd24929835b658a1c19bd4552", "0x558bfff0d583416f7c4e380625c7865821b8e95c"],
+      "weights": [2, 1],
+      "fallback": [true, false]
+    },
+    "ind": "black",
+    "etherscan": "https://etherscan.io/tokenholdings?a=0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
+    "addresses": {
+      "dao": "0x0000000000000000000000000000000000000000",
+      "treasury": "0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
+      "federation": "0xF23815D7dDC73D5cF34671F373d427414dc39dC9"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "mainnetBirthBlock": 0,
+    "fedBirthBlock": 0,
+    "network": [
+      {
+        "key": "nouns"
+      }
+    ],
+    "proposals": []
+  },
   "wiz-nouns": {
     "displayName": "High Council",
     "description": "A set of the most magical Lil Nouns owned by wiz. Members of Lil Nouns DAO collectively decide how these vote on proposals.",
@@ -80,39 +113,6 @@
     "network": [
       {
         "key": "lil-nouns"
-      }
-    ],
-    "proposals": []
-  },
-  "gnars": {
-    "displayName": "Gnars",
-    "description": "A new way to fund extreme athletes.",
-    "name": "Gnars DAO",
-    "key": "gnars",
-    "img": "/static/img/daos/gnars.png",
-    "website": "https://gnars.wtf",
-    "dao": "https://snapshot.org/#/gnars.eth",
-    "released": false,
-    "multiToken": {
-      "tokens": ["0x494715b2a3c75dadd24929835b658a1c19bd4552", "0x558bfff0d583416f7c4e380625c7865821b8e95c"],
-      "weights": [2, 1],
-      "fallback": [true, false]
-    },
-    "ind": "black",
-    "etherscan": "https://etherscan.io/tokenholdings?a=0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
-    "addresses": {
-      "dao": "0x0000000000000000000000000000000000000000",
-      "treasury": "0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
-      "federation": "0xF23815D7dDC73D5cF34671F373d427414dc39dC9"
-    },
-    "treasury": {
-      "balance": "0.0"
-    },
-    "mainnetBirthBlock": 0,
-    "fedBirthBlock": 0,
-    "network": [
-      {
-        "key": "nouns"
       }
     ],
     "proposals": []

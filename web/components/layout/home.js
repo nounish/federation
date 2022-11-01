@@ -1,8 +1,8 @@
 import Head from "./head";
 import { motion } from "framer-motion";
 import Header from "./header";
+import Scene from "../home/shader";
 import styles from "./home.module.scss";
-import Sig from "../sig/sig";
 
 const variants = {
   visible: {
@@ -26,9 +26,9 @@ export default (props) => {
     <>
       <Head {...props} />
       <motion.div variants={variants} initial="hidden" animate="visible" className={styles.w}>
+        <Scene />
         <Header />
         <main className={styles.m}>{props.children}</main>
-        <Sig />
       </motion.div>
     </>
   );

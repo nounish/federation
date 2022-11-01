@@ -1,20 +1,31 @@
-import { RightArrow } from "../icons";
 import Link from "next/link";
+import { Noggles } from "../icons";
 import styles from "./hero.module.scss";
+import Sig from "../sig";
 
 export default () => {
   return (
     <div className={styles.w}>
-      <h2 className="n">DAO-to-DAO governance rails</h2>
-      <p className={styles.subtitle}>
-        Federation is an on-chain delegated voter which enables communities in the Nouns ecosystem to participate in
-        governance with one another.
-      </p>
-      <Link href="/daos">
-        <a className={styles.action}>
-          Launch App <RightArrow width="20px" />
-        </a>
-      </Link>
+      <div className={styles.emp}>
+        <Link href="/faq">
+          <a className={styles.pill}>
+            Questions? ⋅ Learn more <span>→</span>
+          </a>
+        </Link>
+        <h2>A better way to govern together</h2>
+        <div className={styles.actionBar}>
+          <Link href="/daos">
+            <a className={styles.action}>View communities</a>
+          </Link>
+          <p className={styles.sub}>
+            Supported by{" "}
+            <a href="https://nouns.wtf" target="_blank">
+              <Noggles width={50} height={50} fill={"red"} style={{ position: "relative", top: "-3px" }} />
+            </a>
+          </p>
+        </div>
+      </div>
+      <Sig />
     </div>
   );
 };

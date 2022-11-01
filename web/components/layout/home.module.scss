@@ -1,11 +1,8 @@
 .w {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    overflow: hidden;
+    height: 100vh;
+    position: relative;
 }
 
 .m {
-    padding: 1.5rem !important;
+    padding: 1.5rem !important;    
 }

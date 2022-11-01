@@ -19,7 +19,7 @@ export default () => {
       <span style={{ display: "block", textAlign: "center", marginTop: "1.16rem" }}>
         Questions? DM{" "}
         <a href="https://twitter.com/0xWiz_" target="_blank" style={{ color: "#000" }}>
-          wiz ⌐◨-◨
+          wiz
         </a>
       </span>
     </Layout>
