@@ -95,7 +95,8 @@
     "released": false,
     "multiToken": {
       "tokens": ["0x494715b2a3c75dadd24929835b658a1c19bd4552", "0x558bfff0d583416f7c4e380625c7865821b8e95c"],
-      "weights": [2, 1]
+      "weights": [2, 1],
+      "fallback": [true, false]
     },
     "ind": "black",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
