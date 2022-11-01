@@ -21,7 +21,7 @@ const items = [
   },
   {
     title: "Is Federation open-source?",
-    body: `Federation public infrastructure and free to use. The codebase is entirely open-source and available on <a target="_blank" href="https://github.com/nounish/federation">GitHub</a>.`,
+    body: `Federation is public infrastructure and free to use. The codebase is entirely open-source and available on <a target="_blank" href="https://github.com/nounish/federation">GitHub</a>.`,
   },
   {
     title: "What are Nouns?",
