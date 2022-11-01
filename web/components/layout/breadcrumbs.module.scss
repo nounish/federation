@@ -1,9 +1,15 @@
-.b {
+.w {
     display: flex;
     justify-content: flex-start;
-    padding: 0.58rem 1.5rem;
-    width: 100%;
-    background: #fff;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.b {    
+    padding: 0.58rem 1.5rem;    
+    padding-top: 0;
+    width: 100%;    
+    background: #fff;    
 
     ul {
         margin: 0;

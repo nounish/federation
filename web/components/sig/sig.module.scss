@@ -1,6 +1,9 @@
 .sig {
-    font-size: 90%;
-    padding: 1.5rem;
+    position: absolute;
+    left: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 999;
+    text-align: left;
 
     a {
         color: inherit;
@@ -25,7 +28,8 @@
     right: 1.5rem;
     bottom: 1.5rem;
     background: #fff;
-    padding: .5rem;
-    border-radius: 1rem;
+    padding: 0.5rem 1.16rem;
+    border-radius: 2rem;
     user-select: none;
+    z-index: 999;
 }
