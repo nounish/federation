@@ -1,4 +1,4 @@
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import { Vector2, Color } from "three";
 import styles from "./shader.module.scss";
@@ -13,7 +13,7 @@ const Gradient = () => {
       },
       u_mouse: { value: new Vector2(0, 0) },
       u_bg: {
-        value: new Color("#FFF"),
+        value: new Color("#ffafdf"),
       },
       u_colorA: { value: new Color("#D6ABF6") },
       u_colorB: { value: new Color("#6358ee") },
@@ -26,8 +26,10 @@ const Gradient = () => {
     mesh.current.material.uniforms.u_time.value = clock.getElapsedTime();
   });
 
+  const { viewport } = useThree();
+
   return (
-    <mesh ref={mesh} position={[0, 0, 1]} scale={1}>
+    <mesh ref={mesh} position={[0, 0, 1]} scale={[viewport.width, viewport.height, 1]}>
       <planeGeometry args={[1, 1, 42, 32]} />
       <shaderMaterial fragmentShader={fragmentShader} vertexShader={vertexShader} uniforms={uniforms} />
     </mesh>
@@ -37,7 +39,7 @@ const Gradient = () => {
 const Scene = () => {
   return (
     <Canvas
-      camera={{ position: [0.0, 0.0, 1.5] }}
+      camera={{ position: [0.0, 0.0, 30] }}
       className={styles.c}
       style={{ position: "absolute", left: 0, right: 0 }}
     >
