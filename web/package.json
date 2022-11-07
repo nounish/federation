@@ -30,6 +30,7 @@
     "react-bootstrap": "^2.5.0",
     "react-dom": "^18.2.0",
     "react-feather": "^2.0.10",
+    "react-spinners": "^0.13.6",
     "sass": "^1.54.9",
     "three": "^0.146.0",
     "wagmi": "^0.6.6",
