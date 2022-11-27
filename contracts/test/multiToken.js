@@ -6,6 +6,7 @@ const {
   mineBlock,
   setNextBlockTimestamp,
   makeProposal,
+  deployNounish,
 } = require("./utils");
 const { expect } = require("chai");
 const weights = [2, 1];
@@ -618,6 +619,43 @@ describe("Federation Multi-Token", function () {
         const receipt = await n1.federation.getReceipt(1, owner.address);
         expect(receipt.votes).to.equal(wb1.add(wb2));
         expect(receipt.hasVoted).to.be.true;
+      });
+    });
+
+    describe("SingleToken", function () {
+      it.only("should work w/ single token configuration", async function () {
+        const [owner] = await ethers.getSigners();
+
+        const nounish = await deployNounish(owner);
+        const nounishTwo = await deployNounish(owner);
+
+        const Delegate = await ethers.getContractFactory("DelegateMultiToken");
+
+        const fDelegate = await Delegate.deploy(owner.address, 2500, 0);
+        const fDelegateTwo = await Delegate.deploy(owner.address, 2500, 0);
+
+        await fDelegate._setNounishTokens([nounish.token.address], [1], [false]);
+        await fDelegateTwo._setNounishTokens([nounishTwo.token.address], [1], [false]);
+
+        nounish.federation = fDelegate;
+        nounishTwo.federation = fDelegateTwo;
+
+        await makeProposal(nounish, nounishTwo);
+
+        await nounish.federation.castVote(1, 1, "");
+        const receipt = await nounish.federation.getReceipt(1, owner.address);
+        const balance = await nounish.token.balanceOf(owner.address);
+
+        expect(receipt.votes).to.equal(balance);
+        expect(receipt.hasVoted).to.be.true;
+
+        const fProp = await nounish.federation.proposals(1);
+        const execWindow = await nounish.federation.execWindow();
+        await advanceBlocks(fProp.endBlock - execWindow);
+
+        // execute prop
+        const exec = nounish.federation.execute(1);
+        await expect(exec).not.to.be.reverted;
       });
     });
   });

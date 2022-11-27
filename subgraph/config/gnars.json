@@ -1,0 +1,7 @@
+{
+  "network": "mainnet",
+  "federation": {
+    "address": "0xf23815d7ddc73d5cf34671f373d427414dc39dc9",
+    "startBlock": 15866000
+  }
+}

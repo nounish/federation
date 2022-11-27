@@ -13,7 +13,7 @@ task("deployMultiToken", "deploys a new federation multi-token delegate contract
     const weights = [];
     let fallback = [];
 
-    if (args.tokensAndWeights.length % 2 === 0) {
+    if (args.tokensAndWeights.length % 3 === 0) {
       const len = args.tokensAndWeights.length;
       for (let i = 0; i < len / 3; i++) {
         tokens.push(args.tokensAndWeights.shift());

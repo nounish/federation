@@ -80,7 +80,7 @@
       "balance": "0.0"
     },
     "mainnetBirthBlock": 0,
-    "fedBirthBlock": 0,
+    "fedBirthBlock": 15866000,
     "network": [
       {
         "key": "nouns"

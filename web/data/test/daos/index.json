@@ -100,8 +100,9 @@
     "dao": "https://snapshot.org/#/gnars.eth",
     "released": true,
     "multiToken": {
-      "tokens": ["0xD0141E899a65C95a556fE2B27e5982A6DE7fDD7A", "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3"],
-      "weights": [2, 1]
+      "tokens": ["0xD0141E899a65C95a556fE2B27e5982A6DE7fDD7A"],
+      "weights": [1],
+      "fallback": [false]
     },
     "ind": "black",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",

@@ -1,0 +1,116 @@
+type NewExecWindow @entity(immutable: true) {
+  id: Bytes!
+  oldExecWindow: BigInt! # uint256
+  newExecWindow: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type NewQuorumBPS @entity(immutable: true) {
+  id: Bytes!
+  oldQuorumBPS: BigInt! # uint256
+  newQuorumBPS: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type NewVetoer @entity(immutable: true) {
+  id: Bytes!
+  oldVetoer: Bytes! # address
+  newVetoer: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokensChanged @entity(immutable: true) {
+  id: Bytes!
+  newTokens: [String!]! # address[]
+  weights: [BigInt!]! # uint256[]
+  useERC721Balance: [Boolean]! # bool[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+enum ProposalStatus {
+  ACTIVE
+  EXPIRED
+  EXECUTED
+  VETOED
+}
+
+type Proposal @entity {
+  "Internal proposal ID"
+  id: ID!
+
+  "Creator of the proposal"
+  proposer: Bytes!
+
+  "External DAO reference that proposal is for"
+  eDAO: Bytes!
+
+  "External propsal id"
+  eID: BigInt!
+
+  "The number of votes required in order for a quorum to be reached. *DIFFERS from GovernerBravo"
+  quorumVotes: BigInt!
+
+  "The block at which voting begins: holders must delegate their votes prior to this block"
+  startBlock: BigInt!
+
+  "The block at which voting ends: votes must be cast prior to this block"
+  endBlock: BigInt!
+
+  "Current number of votes in favor of this proposal"
+  forVotes: BigInt!
+
+  "Current number of votes in opposition to this proposal"
+  againstVotes: BigInt!
+
+  "Current number of votes for abstaining for this proposal"
+  abstainVotes: BigInt!
+
+  "Flag marking whether the proposal has been vetoed"
+  vetoed: Boolean!
+
+  "Flag marking whether the proposal has been executed"
+  executed: Boolean!
+
+  "Status of the proposal"
+  status: ProposalStatus!
+
+  "Votes associated to this proposal"
+  votes: [Vote!]! @derivedFrom(field: "proposal")
+}
+
+type Vote @entity {
+  "Voter Address + Proposal ID"
+  id: ID!
+
+  "Whether the vote is in favour of the proposal"
+  support: Boolean!
+
+  "The integer support value: against (0), for (1), or abstain (2)"
+  supportDetailed: Int!
+
+  "Amount of votes in favour or against expressed in the smallest unit of the Nouns ERC721 Token"
+  votesRaw: BigInt!
+
+  "Amount of votes in favour or against expressed as a BigInt normalized value for the Nouns ERC721 Token"
+  votes: BigInt!
+
+  "The optional vote reason"
+  reason: String
+
+  "Account that emitted the vote"
+  voter: Bytes!
+
+  "Proposal that is being voted on"
+  proposal: Proposal!
+
+  "Block number of vote"
+  blockNumber: BigInt!
+}
