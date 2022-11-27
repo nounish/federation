@@ -1,0 +1,25 @@
+{
+  "name": "federation",
+  "license": "GPL-3.0",
+  "description": "a subgraph for indexing federation events",
+  "author": "wiz",
+  "directories": {
+    "src": "src"
+  },
+  "scripts": {
+    "clean": "rimraf ./generated subgraph.yaml",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/",
+    "prepare:gnars": "mustache config/gnars.json subgraph.yaml.mustache > subgraph.yaml",
+    "deploy:gnars": "yarn clean && yarn prepare:gnars && yarn codegen && yarn deploy 0xwizzz/federation-subgraph-gnars"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.36.1",
+    "@graphprotocol/graph-ts": "0.28.1",
+    "mustache": "^4.2.0"
+  },
+  "devDependencies": {
+    "matchstick-as": "0.5.0"
+  }
+}

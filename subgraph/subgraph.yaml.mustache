@@ -1,0 +1,45 @@
+specVersion: 0.0.5
+description: >-
+  DAO-to-DAO governance rails
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: multitokenDelegate
+    network: {{network}}
+    source:
+      abi: multitokenDelegate
+      address: "{{federation.address}}"
+      startBlock: {{ federation.startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NewExecWindow
+        - NewQuorumBPS
+        - NewVetoer
+        - TokensChanged
+        - Vote
+        - Proposal
+      abis:
+        - name: multitokenDelegate
+          file: ./abis/multitokenDelegate.json
+      eventHandlers:
+        - event: NewExecWindow(uint256,uint256)
+          handler: handleNewExecWindow
+        - event: NewQuorumBPS(uint256,uint256)
+          handler: handleNewQuorumBPS
+        - event: NewVetoer(address,address)
+          handler: handleNewVetoer
+        - event: ProposalCreated(uint256,address,indexed address,indexed uint256,uint256,uint256,uint256)
+          handler: handleProposalCreated
+        - event: ProposalExecuted(uint256)
+          handler: handleProposalExecuted
+        - event: ProposalVetoed(uint256)
+          handler: handleProposalVetoed
+        - event: TokensChanged(address[],uint256[],bool[])
+          handler: handleTokensChanged
+        - event: VoteCast(indexed address,uint256,uint8,uint256,string)
+          handler: handleVoteCast
+      file: ./src/multitoken-delegate.ts
