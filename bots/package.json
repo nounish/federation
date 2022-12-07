@@ -1,0 +1,21 @@
+{
+  "name": "fed-bots",
+  "author": "wiz",
+  "version": "1.0.0",
+  "description": "federation prop start and execution bots",
+  "main": "src",
+  "scripts": {
+    "build": "webpack",
+    "propose": "env $(cat .env | xargs) node ./src/propose/index.js",
+    "exec": "env $(cat .env | xargs) node ./src/exec/index.js"
+  },
+  "dependencies": {
+    "defender-kvstore-client": "^1.37.0",
+    "defender-relay-client": "^1.37.0",
+    "ethers": "^5.7.2"
+  },
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  }
+}
