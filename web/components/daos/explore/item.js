@@ -1,7 +1,8 @@
+import { ethers } from "ethers";
 import styles from "./item.module.scss";
 import { RightArrow } from "../../../components/icons";
 import Link from "next/link";
-import { cleanName, cleanURL } from "../../../lib/strings";
+import { cleanURL } from "../../../lib/strings";
 import { useProvider } from "wagmi";
 import useStore from "../../../hooks/store/chain/useStore";
 import { useEffect } from "react";
@@ -15,6 +16,7 @@ export default (props) => {
 
   const getTreasuryMeta = useStore((state) => state.getTreasuryMeta);
   useEffect(() => {
+    if (props.addresses.treasury === ethers.constants.AddressZero) return;
     getTreasuryMeta(props.daoKey, provider);
   }, []);
 
@@ -39,7 +41,7 @@ export default (props) => {
             <span className={styles.description}>{props.description}</span>
             <div className="details">
               <ul style={{ padding: "0" }}>
-                <li>Ξ {treasuryBalance}</li>
+                {props.addresses.treasury !== ethers.constants.AddressZero ? <li>Ξ {treasuryBalance}</li> : null}
                 <li className={styles.external}>
                   <a href={props.website} target="_blank">
                     {cleanURL(props.website)}

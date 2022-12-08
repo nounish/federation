@@ -13,6 +13,8 @@ Relayers for OpenZeppelin Defender are "wallets" that will submit transactions o
 
 If you would like to automate proposal submission the address provided by your relayer must be delegated at least one NFT.
 
+Copy `env.example` to `.env` and fill in your relayer's API key and secret.
+
 ## Create Autotasks
 
 Configure each autotask to reference your Federation contract. Open `./src/exec/index.js` and `./src/propose/index.js` and replace the value of `DELEGATE_ADDRESS` with the address of your Federation contract.
