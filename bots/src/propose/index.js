@@ -12,8 +12,6 @@ exports.handler = async function (event) {
   const provider = new DefenderRelayProvider(event);
   const signer = new DefenderRelaySigner(event, provider, { speed: "fast" });
 
-  console.log(JSON.stringify(event, null, "  "));
-
   const fedContract = new ethers.Contract(DELEGATE_ADDRESS, DelegateABI, signer);
   for (let i = 0; i < matchReasons.length; i++) {
     const matchReason = matchReasons[i];

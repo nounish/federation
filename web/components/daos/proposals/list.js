@@ -29,9 +29,11 @@ export default ({ props, fedMeta, dao, loading }) => {
       {executed.length ? (
         <div className={styles.list}>
           <span className={styles.listFilterBar}>Executed votes ({executed.length})</span>
-          {executed.map((item, id) => {
-            return <Item key={id} {...item} fedMeta={fedMeta} executed />;
-          })}
+          {executed
+            .map((item, id) => {
+              return <Item key={id} {...item} fedMeta={fedMeta} executed />;
+            })
+            .reverse()}
         </div>
       ) : null}
     </div>

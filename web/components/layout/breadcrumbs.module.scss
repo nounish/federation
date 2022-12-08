@@ -77,6 +77,11 @@
     align-items: center;
     justify-content: space-between;
     gap: .29rem;
+
+    a {
+        position: relative;
+        top: 1px;
+    }
 }
 
 .bar {

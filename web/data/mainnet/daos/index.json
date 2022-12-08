@@ -29,25 +29,31 @@
   },
   "lil-nouns": {
     "displayName": "Lil Nouns",
+    "description": "Lil Nouns are just like Nouns, but Lil!",
     "name": "Lil Nouns",
     "key": "lil-nouns",
     "released": false,
     "website": "https://lilnouns.wtf",
     "dao": "https://houseoflilnouns.wtf/proposals/",
     "img": "/static/img/daos/lil-nouns.png",
-    "ind": "blue",
+    "ind": "#2b83f6",
     "etherscan": "https://etherscan.io/tokenholdings?a=0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
+    "multiToken": {
+      "tokens": ["0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B"],
+      "weights": [1],
+      "fallback": [false]
+    },
     "addresses": {
       "dao": "0x5d2C31ce16924C2a71D317e5BbFd5ce387854039",
       "treasury": "0xd5f279ff9EB21c6D40C8f345a66f2751C4eeA1fB",
-      "federation": "0x6CED80044091bCd965AdfA844778a47B677579f2",
+      "federation": "0x53Aae9731b42F37dB9185AD6AEC99016eA62B34E",
       "token": "0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B"
     },
     "treasury": {
       "balance": "0.0"
     },
     "daoBirthBlock": 14736000,
-    "fedBirthBlock": 15670000,
+    "fedBirthBlock": 16140000,
     "network": [
       {
         "key": "nouns"
@@ -81,6 +87,74 @@
     },
     "mainnetBirthBlock": 0,
     "fedBirthBlock": 15866000,
+    "network": [
+      {
+        "key": "nouns"
+      }
+    ],
+    "proposals": []
+  },
+  "wizardsdao": {
+    "displayName": "WizardsDAO",
+    "description": "A decentralized community of builders, artists, memers, and crypto enthusiasts.",
+    "name": "WizardsDAO",
+    "key": "wizardsdao",
+    "released": false,
+    "website": "https://wizardsdao.com",
+    "dao": "https://snapshot.org/#/wizdao.eth",
+    "img": "/static/img/daos/wizdao.png",
+    "ind": "#5F16A9",
+    "etherscan": "https://etherscan.io/tokenholdings?a=0xfd4617981Dfdf01A8A098Bf2906d4B55Af801d20",
+    "multiToken": {
+      "tokens": ["0xC23b12EBA3af92dc3Ec94744c0c260caD0EeD0e5"],
+      "weights": [1],
+      "fallback": [true]
+    },
+    "addresses": {
+      "dao": "0x0000000000000000000000000000000000000000",
+      "treasury": "0xfd4617981Dfdf01A8A098Bf2906d4B55Af801d20",
+      "federation": "0xc2768B53fcdaD4629445a82Ac3fe3DCBdC942B45",
+      "token": "0xC23b12EBA3af92dc3Ec94744c0c260caD0EeD0e5"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "daoBirthBlock": 14736000,
+    "fedBirthBlock": 16140000,
+    "network": [
+      {
+        "key": "nouns"
+      }
+    ],
+    "proposals": []
+  },
+  "goop-troop": {
+    "displayName": "Goop Troop",
+    "description": "Goofy Oversized Optics People. A Nounish community.",
+    "name": "Goop Troop",
+    "key": "goop-troop",
+    "released": false,
+    "website": "https://opensea.io/collection/goop-troop",
+    "dao": "https://snapshot.org/#/goopsnapshot.eth",
+    "img": "/static/img/daos/goop.png",
+    "ind": "gray",
+    "etherscan": "#",
+    "multiToken": {
+      "tokens": ["0x15A2d6C2b4B9903C27f50Cb8B32160ab17F186E2"],
+      "weights": [1],
+      "fallback": [true]
+    },
+    "addresses": {
+      "dao": "0x0000000000000000000000000000000000000000",
+      "treasury": "0x0000000000000000000000000000000000000000",
+      "federation": "0x19Cc9d48f2032f3EC8d6f60EA84979169A848231",
+      "token": "0x15A2d6C2b4B9903C27f50Cb8B32160ab17F186E2"
+    },
+    "treasury": {
+      "balance": "0.0"
+    },
+    "daoBirthBlock": 14736000,
+    "fedBirthBlock": 16140000,
     "network": [
       {
         "key": "nouns"
