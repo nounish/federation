@@ -17,7 +17,6 @@ export default ({ items }) => {
     <>
       <div className={styles.mast}>
         <h1>Explore</h1>
-        <span>Discover communities that have integrated Federation to manage cross-DAO governance.</span>
       </div>
       <div className={styles.daos}>
         {items

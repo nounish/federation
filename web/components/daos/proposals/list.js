@@ -28,6 +28,7 @@ export default ({ props, fedMeta, dao, loading }) => {
       </div>
       {executed.length ? (
         <div className={styles.list}>
+          <br />
           <span className={styles.listFilterBar}>Executed votes ({executed.length})</span>
           {executed
             .map((item, id) => {
