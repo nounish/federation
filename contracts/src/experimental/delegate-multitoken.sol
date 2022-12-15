@@ -4,17 +4,20 @@
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC1271} from "@openzeppelin/contracts/interfaces/IERC1271.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 import {NounsTokenLike, NounsDAOStorageV1} from "../external/nouns/governance/NounsDAOInterfaces.sol";
+import "hardhat/console.sol";
 import "../federation.sol";
 
 pragma solidity ^0.8.17;
 
-contract DelegateMultiToken is DelegateEvents {
+contract DelegateMultiToken is DelegateEvents, IERC1271 {
     /// @notice The name of this contract
     string public constant name = "federation multi-token delegate";
 
     /// @notice The address of the vetoer
-    address public vetoer;    
+    address public vetoer;
 
     /// @notice The total number of delegate actions proposed
     uint256 public proposalCount;
@@ -32,11 +35,14 @@ contract DelegateMultiToken is DelegateEvents {
     mapping(address => uint256) public latestProposalIds;
 
     /// @notice A mapping of valid tokens providing representation in the DAO
-    mapping(uint256 => MultiToken) public nounishTokens;    
+    mapping(uint256 => MultiToken) public nounishTokens;
 
     /// @notice Size of the nounishTokens list
     uint256 public nounishTokensSize;
-    
+
+    /// @notice The address of an account approved to sign messages on behalf of this contract
+    address public approvedSigner;
+
     /**
      * @param _vetoer The address that can manage this contract and veto props
      * @param _execWindow The window in blocks that a proposal which has met quorum can be executed
@@ -46,7 +52,7 @@ contract DelegateMultiToken is DelegateEvents {
         execWindow = _execWindow;
         vetoer = _vetoer;
         quorumBPS = _quorumBPS;
-    }    
+    }
 
     /**
      * @notice Function used to propose a new proposal. Sender must have delegates above the proposal threshold
@@ -55,37 +61,29 @@ contract DelegateMultiToken is DelegateEvents {
      * @return Proposal id of internal delegate action
      */
     function propose(NounsDAOStorageV1 eDAO, uint256 ePropID) public returns (uint256) {
-        require(
-            _multiTokenVotes(msg.sender, block.number - 1) > 0,
-            "representation required to start a vote"
-        );
+        require(_multiTokenVotes(msg.sender, block.number - 1) > 0, "representation required to start a vote");
 
-        require(
-            address(eDAO) != address(0),
-            "external DAO address is not valid"
-        );
+        require(address(eDAO) != address(0), "external DAO address is not valid");
 
-        require(
-            !_alreadyProposed(address(eDAO), ePropID),
-            "proposal already proposed"
-        );
+        require(!_alreadyProposed(address(eDAO), ePropID), "proposal already proposed");
 
         // this delegate must have representation before voting can be started
         try eDAO.nouns().getPriorVotes(address(this), block.number - 1) returns (uint96 votes) {
-            require(votes > 0, "delegate does not have external DAO representation");   
-        } catch(bytes memory) {
+            require(votes > 0, "delegate does not have external DAO representation");
+        } catch (bytes memory) {
             revert("checking delegate representation on external DAO failed");
-        }        
+        }
 
         // check when external proposal ends
         uint256 ePropEndBlock;
         try this._externalProposal(eDAO, ePropID) returns (uint256 endBlock) {
             ePropEndBlock = endBlock;
-        } catch(bytes memory) {
+        } catch (bytes memory) {
             revert(
-                string.concat("invalid external proposal id: ", 
-                    Strings.toString(ePropID), 
-                    " for external DAO: ", 
+                string.concat(
+                    "invalid external proposal id: ",
+                    Strings.toString(ePropID),
+                    " for external DAO: ",
                     Strings.toHexString(address(eDAO))
                 )
             );
@@ -99,10 +97,7 @@ contract DelegateMultiToken is DelegateEvents {
         newProposal.eID = ePropID;
         newProposal.eDAO = address(eDAO);
         newProposal.proposer = msg.sender;
-        newProposal.quorumVotes = bps2Uint(
-            quorumBPS,
-            _multiTokenSupply()
-        );
+        newProposal.quorumVotes = bps2Uint(quorumBPS, _multiTokenSupply());
 
         /// @notice immediately open proposal for voting
         newProposal.startBlock = block.number;
@@ -123,7 +118,7 @@ contract DelegateMultiToken is DelegateEvents {
             newProposal.startBlock,
             newProposal.endBlock,
             newProposal.quorumVotes
-        );
+            );
 
         return newProposal.id;
     }
@@ -134,22 +129,16 @@ contract DelegateMultiToken is DelegateEvents {
      * @dev This function ensures that the proposal has reached quorum through a result check
      */
     function execute(uint256 proposalId) external {
-        require(
-            state(proposalId) == ProposalState.Active,
-            "proposal can only be executed if it is active"
-        );
+        require(state(proposalId) == ProposalState.Active, "proposal can only be executed if it is active");
 
         ProposalResult r = result(proposalId);
-        require(
-            r != ProposalResult.Undecided,
-            "proposal result cannot be undecided"
-        );
+        require(r != ProposalResult.Undecided, "proposal result cannot be undecided");
 
         DelegateAction storage proposal = proposals[proposalId];
         proposal.executed = true;
 
         require(
-            block.number >= proposal.endBlock-execWindow,
+            block.number >= proposal.endBlock - execWindow,
             "proposal can only be executed if it is within the execution window"
         );
 
@@ -173,34 +162,24 @@ contract DelegateMultiToken is DelegateEvents {
      */
     function veto(uint256 proposalId) external {
         require(vetoer != address(0), "veto power burned");
-        
+
         require(msg.sender == vetoer, "caller not vetoer");
-        
-        require(
-            state(proposalId) != ProposalState.Executed,
-            "cannot veto executed proposal"
-        );
+
+        require(state(proposalId) != ProposalState.Executed, "cannot veto executed proposal");
 
         DelegateAction storage proposal = proposals[proposalId];
         proposal.vetoed = true;
 
         emit ProposalVetoed(proposalId);
-    }    
+    }
 
     /**
      * @notice Cast a vote for a proposal with an optional reason
      * @param proposalId The id of the proposal to vote on
      * @param support The support value for the vote. 0=against, 1=for, 2=abstain
      */
-    function castVote(
-        uint256 proposalId,
-        uint8 support,
-        string calldata reason
-    ) external {
-        require(
-            state(proposalId) == ProposalState.Active,
-            "voting is closed"
-        );
+    function castVote(uint256 proposalId, uint8 support, string calldata reason) external {
+        require(state(proposalId) == ProposalState.Active, "voting is closed");
 
         require(support <= 2, "invalid vote type");
 
@@ -211,10 +190,7 @@ contract DelegateMultiToken is DelegateEvents {
 
         Receipt storage receipt = proposal.receipts[msg.sender];
 
-        require(
-            receipt.hasVoted == false,
-            "already voted"
-        );
+        require(receipt.hasVoted == false, "already voted");
 
         if (support == 0) {
             proposal.againstVotes = proposal.againstVotes + votes;
@@ -228,13 +204,7 @@ contract DelegateMultiToken is DelegateEvents {
         receipt.support = support;
         receipt.votes = votes;
 
-        emit VoteCast(
-            msg.sender,
-            proposalId,
-            support,
-            votes,
-            reason
-        );
+        emit VoteCast(msg.sender, proposalId, support, votes, reason);
     }
 
     /**
@@ -278,7 +248,7 @@ contract DelegateMultiToken is DelegateEvents {
 
         DelegateAction storage proposal = proposals[proposalId];
 
-        uint256 totalVotes = proposal.forVotes + proposal.againstVotes + proposal.abstainVotes ;
+        uint256 totalVotes = proposal.forVotes + proposal.againstVotes + proposal.abstainVotes;
         if (totalVotes < proposal.quorumVotes) {
             return ProposalResult.Undecided;
         }
@@ -302,7 +272,7 @@ contract DelegateMultiToken is DelegateEvents {
      * @notice Changes quorum BPS for a proposal
      * @dev function for updating quorumBPS
      */
-    function _setQuorumBPS(uint _quorumBPS) external {
+    function _setQuorumBPS(uint256 _quorumBPS) external {
         require(msg.sender == vetoer, "vetoer only");
 
         emit NewQuorumBPS(quorumBPS, _quorumBPS);
@@ -314,7 +284,7 @@ contract DelegateMultiToken is DelegateEvents {
      * @notice Changes proposal exec window
      * @dev function for updating the exec window of a proposal
      */
-    function _setExecWindow(uint newExecWindow) external {
+    function _setExecWindow(uint256 newExecWindow) external {
         require(msg.sender == vetoer, "vetoer only");
 
         emit NewExecWindow(execWindow, newExecWindow);
@@ -348,15 +318,19 @@ contract DelegateMultiToken is DelegateEvents {
         /// @notice use erc721 balance for caller when calculating vote representation
         bool useERC721Balance;
         /// @notice the address of the NounishToken
-        address token;                
+        address token;
         /// @notice voting weight given to token
         uint256 weight;
     }
 
     /**
      * @notice Sets tokens to be used for governing this delegate
-     */ 
-    function _setNounishTokens(address[] calldata _nounishTokens, uint256[] calldata _weights, bool[] calldata _useERC721Balance) external {
+     */
+    function _setNounishTokens(
+        address[] calldata _nounishTokens,
+        uint256[] calldata _weights,
+        bool[] calldata _useERC721Balance
+    ) external {
         require(msg.sender == vetoer, "vetoer only");
 
         emit TokensChanged(_nounishTokens, _weights, _useERC721Balance);
@@ -372,21 +346,29 @@ contract DelegateMultiToken is DelegateEvents {
     }
 
     /**
+     * @notice Sets approved signer for ERC1271 signatures
+     */
+    function _setApprovedSigner(address _signer) external {
+        require(msg.sender == vetoer, "vetoer only");
+
+        emit SignerChanged(approvedSigner, _signer);
+
+        approvedSigner = _signer;
+    }
+
+    /**
      * @notice Helper function to sum all votes w/ weights for given sender
-     */ 
-    function _multiTokenVotes(address sender, uint256 startBlock) public view returns (uint96) {        
+     */
+    function _multiTokenVotes(address sender, uint256 startBlock) public view returns (uint96) {
         uint96 votes = 0;
 
         for (uint256 i = 0; i < nounishTokensSize; i += 1) {
             MultiToken memory mt = nounishTokens[i];
             if (mt.useERC721Balance) {
-                votes += uint96(
-                    IERC721(
-                        nounishTokens[i].token
-                    ).balanceOf(sender) * nounishTokens[i].weight
-                );            
+                votes += uint96(IERC721(nounishTokens[i].token).balanceOf(sender) * nounishTokens[i].weight);
             } else {
-                votes += NounsTokenLike(nounishTokens[i].token).getPriorVotes(sender, startBlock) * uint96(nounishTokens[i].weight);            
+                votes += NounsTokenLike(nounishTokens[i].token).getPriorVotes(sender, startBlock)
+                    * uint96(nounishTokens[i].weight);
             }
         }
 
@@ -395,8 +377,8 @@ contract DelegateMultiToken is DelegateEvents {
 
     /**
      * @notice Helper function to sum total supply of tokens set for this delegate
-     */ 
-    function _multiTokenSupply() public view returns (uint256) {        
+     */
+    function _multiTokenSupply() public view returns (uint256) {
         uint256 supply = 0;
 
         for (uint256 i = 0; i < nounishTokensSize; i += 1) {
@@ -408,11 +390,9 @@ contract DelegateMultiToken is DelegateEvents {
 
     /**
      * @notice Helper function that parses end block from external proposals.
-     */ 
+     */
     function _externalProposal(NounsDAOStorageV1 eDAO, uint256 ePropID) public view returns (uint256) {
-        (,,,,,, uint256 ePropEndBlock,,,,,,) = eDAO.proposals(
-            ePropID
-        );
+        (,,,,,, uint256 ePropEndBlock,,,,,,) = eDAO.proposals(ePropID);
 
         return ePropEndBlock;
     }
@@ -420,15 +400,28 @@ contract DelegateMultiToken is DelegateEvents {
     /**
      * @notice Helper function that determines if an external proposal has already been opened
      * for vote
-     */ 
+     */
     function _alreadyProposed(address eDAO, uint256 ePropID) public view returns (bool) {
-        for (uint i=1; i <= proposalCount; i++){
+        for (uint256 i = 1; i <= proposalCount; i++) {
             if (proposals[i].eDAO == eDAO && proposals[i].eID == ePropID) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    bytes4 constant IERC1271_MAGIC_VALUE = 0x1626ba7e;
+
+    /**
+     * @dev Implement IERC1271 handles EOA and smart contract signature verification
+     */
+    function isValidSignature(bytes32 hash, bytes memory signature) external view returns (bytes4 magicValue) {
+        require(approvedSigner != address(0), "approvedSigner not set");
+
+        if (SignatureChecker.isValidSignatureNow(approvedSigner, hash, signature)) {
+            magicValue = IERC1271_MAGIC_VALUE;
+        }
     }
 
     /**
