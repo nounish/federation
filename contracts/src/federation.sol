@@ -49,7 +49,7 @@ struct DelegateAction {
     /// @notice Current number of votes in opposition to this proposal
     uint256 againstVotes;
     /// @notice Current number of votes for abstaining for this proposal
-    uint256 abstainVotes;    
+    uint256 abstainVotes;
     /// @notice Flag marking whether the proposal has been vetoed
     bool vetoed;
     /// @notice Flag marking whether the proposal has been executed
@@ -85,13 +85,7 @@ contract DelegateEvents {
     /// @param support Support value for the vote. 0=against, 1=for, 2=abstain
     /// @param votes Number of votes which were cast by the voter
     /// @param reason The reason given for the vote by the voter
-    event VoteCast(
-        address indexed voter,
-        uint256 proposalId,
-        uint8 support,
-        uint256 votes,
-        string reason
-    );
+    event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 votes, string reason);
 
     /// @notice An event emitted when a proposal has been executed in the NounsDAOExecutor
     event ProposalExecuted(uint256 id);
@@ -105,16 +99,12 @@ contract DelegateEvents {
     /// @notice Emitted when exec window is changed
     event NewExecWindow(uint256 oldExecWindow, uint256 newExecWindow);
 
-    event NewQuorumBPS(
-        uint256 oldQuorumBPS,        
-        uint256 newQuorumBPS
-    );
+    event NewQuorumBPS(uint256 oldQuorumBPS, uint256 newQuorumBPS);
 
-    event TokensChanged(
-        address[] newTokens,
-        uint256[] weights,
-        bool[] useERC721Balance
-    );
+    event TokensChanged(address[] newTokens, uint256[] weights, bool[] useERC721Balance);
+
+    /// @notice Emitted when ERC1271 approved signer is changed
+    event SignerChanged(address oldSigner, address newSigner);
 }
 
 interface INounsDAOGovernance {
@@ -135,6 +125,6 @@ interface INounsDAOGovernance {
     function state(uint256 proposalId) external view returns (NounsDAOStorageV1.ProposalState);
 
     function quorumVotes() external view returns (uint256);
-    
+
     function proposalThreshold() external view returns (uint256);
 }

@@ -511,7 +511,7 @@ describe("Federation Multi-Token", function () {
   describe("Multi-Token", function () {
     describe("Admin", function () {
       it("Vetoer can set tokens and weights", async function () {
-        const [_, vetoer] = await ethers.getSigners();
+        const [sig, vetoer] = await ethers.getSigners();
 
         const weights = [2, 1];
         const { n1, n2 } = await setup(vetoer, weights);
@@ -520,6 +520,25 @@ describe("Federation Multi-Token", function () {
         await expect(n1.federation.connect(vetoer)._setNounishTokens(tokens, weights, [true, false])).not.to.be
           .reverted;
         await expect(n1.federation._setNounishTokens(tokens, weights, [true, false])).to.be.reverted;
+      });
+
+      it.only("Vetoer can set approvedSigner for ERC1271 sigs", async function () {
+        const [owner, vetoer] = await ethers.getSigners();
+
+        const weights = [1, 1];
+        const { n1 } = await setup(vetoer, weights);
+
+        await expect(n1.federation.connect(vetoer)._setApprovedSigner(owner.address)).not.to.be.reverted;
+        await expect(n1.federation._setApprovedSigner(address(0))).to.be.reverted;
+
+        const dataToSign = { msg: "hello world" };
+        const dataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(dataToSign));
+        const dataHashBin = ethers.utils.arrayify(dataHash);
+
+        const hash = ethers.utils.hashMessage(dataHashBin);
+        const sig = await owner.signMessage(dataHashBin);
+
+        expect(await n1.federation.isValidSignature(hash, sig)).to.equal("0x1626ba7e");
       });
     });
 
