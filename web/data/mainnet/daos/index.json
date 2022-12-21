@@ -133,7 +133,7 @@
     "description": "Goofy Oversized Optics People. A Nounish community.",
     "name": "Goop Troop",
     "key": "goop-troop",
-    "released": false,
+    "released": true,
     "website": "https://opensea.io/collection/goop-troop",
     "dao": "https://snapshot.org/#/goopsnapshot.eth",
     "img": "/static/img/daos/goop.png",
