@@ -522,14 +522,16 @@ describe("Federation Multi-Token", function () {
         await expect(n1.federation._setNounishTokens(tokens, weights, [true, false])).to.be.reverted;
       });
 
-      it.only("Vetoer can set approvedSigner for ERC1271 sigs", async function () {
-        const [owner, vetoer] = await ethers.getSigners();
+      it("Vetoer can set approvedSigner for ERC1271 sigs", async function () {
+        const [owner, vetoer, rando] = await ethers.getSigners();
 
         const weights = [1, 1];
         const { n1 } = await setup(vetoer, weights);
 
         await expect(n1.federation.connect(vetoer)._setApprovedSigner(owner.address)).not.to.be.reverted;
-        await expect(n1.federation._setApprovedSigner(address(0))).to.be.reverted;
+        await expect(n1.federation.connect(rando)._setApprovedSigner(address(0))).to.be.reverted;
+        await expect(n1.federation._setApprovedSigner(rando.address)).to.not.be.reverted;
+        await expect(n1.federation.connect(rando)._setApprovedSigner(owner.address)).to.not.be.reverted;
 
         const dataToSign = { msg: "hello world" };
         const dataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(dataToSign));
@@ -543,6 +545,46 @@ describe("Federation Multi-Token", function () {
     });
 
     describe("Proposals", function () {
+      it("only vetoer or submitter can set submitter", async function () {
+        const [owner, na, , rando] = await ethers.getSigners();
+        const { n1, n2 } = await setup(null, weights);
+
+        await expect(n2.federation.connect(rando)._setApprovedSubmitter(owner.address)).to.be.revertedWith(
+          "vetoer or submitter only"
+        );
+
+        await expect(n2.federation._setApprovedSubmitter(rando.address)).to.not.be.reverted;
+
+        await expect(n2.federation.connect(na)._setApprovedSubmitter(owner.address)).to.be.reverted;
+
+        await expect(n2.federation.connect(rando)._setApprovedSubmitter(owner.address)).to.not.be.reverted;
+      });
+
+      it("should allow submitting a prop by the approved submitter", async function () {
+        const [owner, , , rando] = await ethers.getSigners();
+        const { n1, n2 } = await setup(null, weights);
+
+        const targets = [n2.token.address];
+        const values = ["0"];
+        const signatures = ["balanceOf(address)"];
+        const callDatas = [encodeParameters(["address"], [owner.address])];
+
+        await n1.token.transferFrom(owner.address, n2.federation.address, 0);
+
+        await n2.federation._setApprovedSubmitter(owner.address);
+
+        await expect(
+          n2.federation.submitProp(targets, values, signatures, callDatas, "check owner balance", n1.delegate.address)
+        ).to.not.be.reverted;
+
+        // ensure only the approved submitter can submit
+        await expect(
+          n2.federation
+            .connect(rando)
+            .submitProp(targets, values, signatures, callDatas, "check owner balance", n1.delegate.address)
+        ).to.be.revertedWith("submitter only");
+      });
+
       it("should allow making a proposal from only one token in multi-token list (first)", async function () {
         const [owner, , , rando] = await ethers.getSigners();
         const { n1, n2, n3 } = await setup(null, weights);
@@ -642,7 +684,7 @@ describe("Federation Multi-Token", function () {
     });
 
     describe("SingleToken", function () {
-      it.only("should work w/ single token configuration", async function () {
+      it("should work w/ single token configuration", async function () {
         const [owner] = await ethers.getSigners();
 
         const nounish = await deployNounish(owner);
