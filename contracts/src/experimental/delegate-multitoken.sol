@@ -43,6 +43,10 @@ contract DelegateMultiToken is DelegateEvents, IERC1271 {
     /// @notice The address of an account approved to sign messages on behalf of this contract
     address public approvedSigner;
 
+    /// @notice The address of an account approved to submit proposals using the delegated representation
+    /// held by this smart contract
+    address public approvedSubmitter;
+
     /**
      * @param _vetoer The address that can manage this contract and veto props
      * @param _execWindow The window in blocks that a proposal which has met quorum can be executed
@@ -346,10 +350,38 @@ contract DelegateMultiToken is DelegateEvents, IERC1271 {
     }
 
     /**
+     * @notice Sets approved submitter for proposals
+     */
+    function _setApprovedSubmitter(address _submitter) external {
+        require(msg.sender == vetoer || msg.sender == approvedSubmitter, "vetoer or submitter only");
+
+        emit SubmitterChanged(approvedSubmitter, _submitter);
+
+        approvedSubmitter = _submitter;
+    }
+
+    /**
+     * @notice Allows an approved submitter to submit a proposal against an external DAO
+     */
+    function submitProp(
+        address[] memory targets,
+        uint256[] memory values,
+        string[] memory signatures,
+        bytes[] memory calldatas,
+        string memory description,
+        INounsDAOGovernance eDAO
+    ) external returns (uint256) {
+        require(msg.sender == approvedSubmitter, "submitter only");
+
+        uint256 propID = eDAO.propose(targets, values, signatures, calldatas, description);
+        return propID;
+    }
+
+    /**
      * @notice Sets approved signer for ERC1271 signatures
      */
     function _setApprovedSigner(address _signer) external {
-        require(msg.sender == vetoer, "vetoer only");
+        require(msg.sender == vetoer || msg.sender == approvedSigner, "vetoer or signer only");
 
         emit SignerChanged(approvedSigner, _signer);
 

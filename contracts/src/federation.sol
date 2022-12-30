@@ -105,6 +105,9 @@ contract DelegateEvents {
 
     /// @notice Emitted when ERC1271 approved signer is changed
     event SignerChanged(address oldSigner, address newSigner);
+
+    /// @notice Emitted when approved submitter is changed
+    event SubmitterChanged(address oldSubmitter, address newSubmitter);
 }
 
 interface INounsDAOGovernance {
