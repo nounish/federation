@@ -1,3 +1,5 @@
+const { BigNumber } = require("ethers");
+
 // setup deploys two networked Nouns instances (NFT + governance) as well as their Federation delegates
 // to be used for each test run. allows setting a custom vetoer for test purposes
 const setup = async function (vetoer = "") {
@@ -27,9 +29,33 @@ const setup = async function (vetoer = "") {
   return { n1: nounish, n2: nounishTwo };
 };
 
-const randomInt = (min, max) => {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
+// setupBid deploys two networked Nouns instances (NFT + governance) as well as their Federation bid delegates
+const setupBid = async function () {
+  const [owner] = await ethers.getSigners();
+
+  const nounish = await deployNounish(owner);
+  const nounishTwo = await deployNounish(owner);
+
+  // deploy a federation delegate for each nounish instance
+  const Delegate = await ethers.getContractFactory("DelegateBid");
+  const fDelegate = await Delegate.deploy(
+    150, // 30 min exec window
+    BigNumber.from("10000000000000000"), // 0.01 eth base tip
+    BigNumber.from("100000000000000000"), // 0.1 eth min bid
+    5 // bid inc %,
+  );
+
+  const fDelegateTwo = await Delegate.deploy(
+    150, // 30 min exec window
+    BigNumber.from("10000000000000000"), // 0.01 eth base tip
+    BigNumber.from("100000000000000000"), // 0.1 eth min bid
+    5 // bid inc %,
+  );
+
+  nounish.federation = fDelegate;
+  nounishTwo.federation = fDelegateTwo;
+
+  return { n1: nounish, n2: nounishTwo };
 };
 
 // setupMultiTokenNetwork deploys two networked Nouns instances (NFT + governance) as well as multi-token
@@ -147,7 +173,7 @@ const deployNounish = async function (owner, numToMint = 5) {
 
 // makeProposal creates a proposal against an external DAO and opens a federation proposal
 // to vote against it
-const makeProposal = async function (n1, n2) {
+const makeProposal = async function (n1, n2, skipFedProp = false) {
   const [owner, eDAOMember] = await ethers.getSigners();
 
   // delegate n2 representation to federation
@@ -165,8 +191,10 @@ const makeProposal = async function (n1, n2) {
   await n2.delegate.connect(eDAOMember).propose(targets, values, signatures, callDatas, "check owner balance");
 
   // create a federatation prop against external proposal
-  const ePropID = await n2.delegate.latestProposalIds(eDAOMember.address);
-  await n1.federation.propose(n2.delegate.address, ePropID);
+  if (!skipFedProp) {
+    const ePropID = await n2.delegate.latestProposalIds(eDAOMember.address);
+    await n1.federation.propose(n2.delegate.address, ePropID);
+  }
 };
 
 const encodeParameters = (types, values) => {
@@ -197,6 +225,11 @@ const setNextBlockTimestamp = async (n, mine = true) => {
   if (mine) await mineBlock();
 };
 
+const randomInt = (min, max) => {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 module.exports = {
   encodeParameters,
   address,
@@ -204,10 +237,11 @@ module.exports = {
   mineBlock,
   advanceBlocks,
   setNextBlockTimestamp,
-  setup,
   deployNounish,
   makeProposal,
   randomInt,
+  setup,
   setupLargeNetwork,
   setupMultiTokenNetwork,
+  setupBid,
 };
