@@ -80,7 +80,7 @@
     "addresses": {
       "dao": "0x0000000000000000000000000000000000000000",
       "treasury": "0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
-      "federation": "0xF23815D7dDC73D5cF34671F373d427414dc39dC9"
+      "federation": "0xb5a497ce6b9843e5936b9da985174c0906520387"
     },
     "treasury": {
       "balance": "0.0"
