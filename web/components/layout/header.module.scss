@@ -1,3 +1,19 @@
+.announcement {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    padding: .16rem 0;
+    z-index: 999;
+    background: #000;
+    color: #fff;
+    position: relative;
+
+    a {
+        color: #fff;
+    }
+}
+
 .header{
     display: flex;
     width: 100%;
