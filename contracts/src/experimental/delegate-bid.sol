@@ -68,7 +68,7 @@ contract DelegateBid is IERC1271, ReentrancyGuard, Refundable, Ownable {
     /// @notice Emitted when vote cast window is changed
     event NewCastWindow(uint256 oldExecWindow, uint256 newExecWindow);
 
-    /// @notice Emitted when base tip awarted to execute vote cast is changed
+    /// @notice Emitted when base tip awarded to execute vote cast is changed
     event NewBaseTip(uint256 oldTip, uint256 newTip);
 
     /// @notice Emitted when ERC1271 the signer is changed
@@ -275,8 +275,8 @@ contract DelegateBid is IERC1271, ReentrancyGuard, Refundable, Ownable {
      * @dev Function for updating beneficiary
      */
     function setBeneficiary(address _beneficiary) external onlyOwner {
-        beneficiary = _beneficiary;
         emit NewBeneficiary(beneficiary, _beneficiary);
+        beneficiary = _beneficiary;
     }
 
     /**
@@ -284,8 +284,8 @@ contract DelegateBid is IERC1271, ReentrancyGuard, Refundable, Ownable {
      * @dev function for updating minBidIncrementPercentage
      */
     function setMinBidIncrementPercentage(uint8 _minBidIncrementPercentage) external onlyOwner {
-        minBidIncrementPercentage = _minBidIncrementPercentage;
         emit NewMinBidIncrementPercentage(minBidIncrementPercentage, _minBidIncrementPercentage);
+        minBidIncrementPercentage = _minBidIncrementPercentage;
     }
 
     /**
@@ -293,8 +293,8 @@ contract DelegateBid is IERC1271, ReentrancyGuard, Refundable, Ownable {
      * @dev function for updating minBid
      */
     function setMinBid(uint256 _minBid) external onlyOwner {
-        minBid = _minBid;
         emit NewMinBid(minBid, _minBid);
+        minBid = _minBid;
     }
 
     /**
@@ -302,8 +302,17 @@ contract DelegateBid is IERC1271, ReentrancyGuard, Refundable, Ownable {
      * @dev function for updating execWindow
      */
     function setCastWindow(uint256 _castWindow) external onlyOwner {
-        castWindow = _castWindow;
         emit NewCastWindow(castWindow, _castWindow);
+        castWindow = _castWindow;
+    }
+
+    /**
+     * @notice Changes the execution tip amount
+     * @dev function for updating baseTip
+     */
+    function setBaseTip(uint256 _baseTip) external onlyOwner {
+        emit NewBaseTip(baseTip, _baseTip);
+        baseTip = _baseTip;
     }
 
     /**
@@ -311,8 +320,8 @@ contract DelegateBid is IERC1271, ReentrancyGuard, Refundable, Ownable {
      * @dev Function for updating approvedSubmitter
      */
     function setApprovedSubmitter(address _submitter) external onlyOwner {
-        approvedSubmitter = _submitter;
         emit SubmitterChanged(approvedSubmitter, _submitter);
+        approvedSubmitter = _submitter;
     }
 
     /**
@@ -320,8 +329,8 @@ contract DelegateBid is IERC1271, ReentrancyGuard, Refundable, Ownable {
      * @dev Function for updating approvedSigner
      */
     function setApprovedSigner(address _signer) external onlyOwner {
-        approvedSigner = _signer;
         emit SignerChanged(approvedSigner, _signer);
+        approvedSigner = _signer;
     }
 
     // IERC1271 IMPLEMENTATION
