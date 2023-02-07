@@ -8,6 +8,8 @@
     "dao": "https://houseofnouns.xyz/proposals/",
     "released": true,
     "multiToken": false,
+    "multiType": false,
+    "builderDAO": false,
     "ind": "gold",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -39,6 +41,8 @@
     "dao": "https://houseoflilnouns.wtf/proposals/",
     "released": true,
     "multiToken": false,
+    "multiType": false,
+    "builderDAO": false,
     "ind": "blue",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -68,6 +72,8 @@
     "dao": "https://piconouns.wtf/vote/",
     "released": true,
     "multiToken": false,
+    "multiType": false,
+    "builderDAO": false,
     "ind": "purple",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0BC3807Ec262cB779b38D65b38158acC3bfedE10",
     "addresses": {
@@ -99,17 +105,21 @@
     "website": "https://gnars.wtf",
     "dao": "https://snapshot.org/#/gnars.eth",
     "released": true,
+    "multiType": true,
+    "builderDAO": true,
     "multiToken": {
-      "tokens": ["0xD0141E899a65C95a556fE2B27e5982A6DE7fDD7A"],
+      "tokens": ["0x9a00261088e3d60B69ABeDe1dC8CE0d706d640ce"],
       "weights": [1],
-      "fallback": [false]
+      "fallback": [false],
+      "govType": [1]
     },
     "ind": "black",
     "etherscan": "https://etherscan.io/tokenholdings?a=0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
     "addresses": {
-      "dao": "0xc582Bc0317dbb0908203541971a358c44b1F3766",
-      "treasury": "0x0658f4eD17289144717713ADfFC2539eF7c2EF8e",
-      "federation": "0xefAB0Beb0A557E452b398035eA964948c750b2Fd"
+      "dao": "0x9565b8b24ffe05b055a94D2Da42Cd671ccB51EaE",
+      "treasury": "0xdc7CE67641F52F44Ece92dd6B46B42BcCA1e944f",
+      "federation": "0x821f3361D454cc98b7555221A06Be563a7E2E0A6",
+      "token": "0x9a00261088e3d60B69ABeDe1dC8CE0d706d640ce"
     },
     "treasury": {
       "balance": "0.0"
@@ -119,6 +129,9 @@
     "network": [
       {
         "key": "nouns"
+      },
+      {
+        "key": "gnars"
       }
     ],
     "proposals": []

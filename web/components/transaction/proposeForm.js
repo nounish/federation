@@ -4,13 +4,18 @@ import { useWaitForTransaction, useProvider } from "wagmi";
 import { ethers } from "ethers";
 import useStore from "../../hooks/store/chain/useStore";
 import FDelegateABI from "../../abi/f-delegate.json";
+import FMTDelegateABI from "../../abi/f-mt-delegate.json";
 import ParentDAOContext from "../../hooks/context/parentDAO";
 import useDAOIndex from "../../hooks/daoData";
 
-const parsePropIDFromCreatedLog = (contract, logs = []) => {
+const parsePropIDFromCreatedLog = (contract, multiType = false, logs = []) => {
   for (let log in logs) {
     const parsed = contract.interface.parseLog(logs[log]);
     if (parsed.name === "ProposalCreated") {
+      return parsed.args.id.toNumber();
+    }
+
+    if (parsed.name === "MultiTypeProposalCreated") {
       return parsed.args.id.toNumber();
     }
   }
@@ -23,6 +28,7 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title, txType }) 
   const parentDAO = useContext(ParentDAOContext);
   const { data, error, isLoading, isSuccess } = useWaitForTransaction({ hash: activeTx.hash });
   const setProposalProposed = useStore((state) => state.setProposalProposed);
+  const refreshProposal = useStore((state) => state.refreshProposal);
   const daoIndex = useDAOIndex();
 
   // update proposal state in store when the tx is confirmed
@@ -32,14 +38,17 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title, txType }) 
     const fn = async () => {
       if (txType == "execute") return;
 
-      const c = new ethers.Contract(data.to, FDelegateABI, p);
-      const pID = parsePropIDFromCreatedLog(c, data.logs);
+      const c = new ethers.Contract(data.to, parentDAO.multiType ? FMTDelegateABI : FDelegateABI, p);
+      const pID = parsePropIDFromCreatedLog(c, parentDAO.multiType, data.logs);
       if (!pID) {
         console.error("could not parse proposal id from logs");
         return;
       }
 
       await setProposalProposed(parentDAO.key, pID, eDAOKey, eID);
+
+      // multitype requires timestamp info to function so we must query the chain
+      await refreshProposal(parentDAO.key, pID, eDAOKey, eID, p);
     };
 
     try {
@@ -122,7 +131,7 @@ export default ({ setOpen, onFinished, activeTx, eDAOKey, eID, title, txType }) 
           <label>DAO</label>
           <input type="text" disabled placeholder={daoIndex[eDAOKey]?.name} />
           <label>Proposal</label>
-          <input type="text" disabled placeholder={`#${eID}`} />
+          <input type="text" disabled placeholder={`${eID}`} />
           <label>Title</label>
           <input type="text" disabled placeholder={title} />
         </div>

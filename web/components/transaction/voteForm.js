@@ -12,6 +12,7 @@ import useStore from "../../hooks/store/chain/useStore";
 import useDAOIndex from "../../hooks/daoData";
 import ParentDAOContext from "../../hooks/context/parentDAO";
 import FedDelegateABI from "../../abi/f-delegate.json";
+import FedMTDelegateABI from "../../abi/f-mt-delegate.json";
 import NounishTokenABI from "../../abi/nounish-token.json";
 import { parseError } from "../../lib/strings";
 import useUserVotes from "../../hooks/votes/useUserVotes";
@@ -26,7 +27,7 @@ export default (props) => {
       const tx = await castVote();
       setSubmittedTx(Object.assign({ support }, tx));
     } catch (ex) {
-      if (!err.message.includes("user rejected transaction")) {
+      if (!ex.message.includes("user rejected transaction")) {
         // todo :- better error handling
         // will only get here if there is an onchain error
         console.error(err);
@@ -47,7 +48,11 @@ const CastVote = (props) => {
   const [reason, setReason] = useState("");
   const [support, setSupport] = useState(props.activeTx.support);
 
-  const { votes, err: priorVotesErr } = useUserVotes(props.parentDAO)(account.address, props.startBlock - 1);
+  const { votes, err: priorVotesErr } = useUserVotes(props.parentDAO)(
+    account.address,
+    props.startBlock - 1,
+    props.startTimestamp - 1
+  );
 
   const { config, err } = usePrepareContractWrite({
     addressOrName: props.parentDAO.addresses.federation,
@@ -213,7 +218,7 @@ const Submitted = ({ setOpen, onFinished, activeTx, id, eDAOKey, eID, title }) =
           <label>DAO</label>
           <input type="text" disabled placeholder={daoIndex[eDAOKey]?.name} />
           <label>Proposal</label>
-          <input type="text" disabled placeholder={`#${eID}`} />
+          <input type="text" disabled placeholder={`${eID}`} />
           <label>Title</label>
           <input type="text" disabled placeholder={title} />
         </div>

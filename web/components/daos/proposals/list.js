@@ -11,7 +11,7 @@ export default ({ props, fedMeta, dao, loading }) => {
 
   return (
     <div className="container">
-      <NetworkInfo dao={dao} />
+      <NetworkInfo dao={dao} fedMeta={fedMeta} />
       <div className={styles.list}>
         <span className={styles.listFilterBar}>External proposals ({active.length})</span>
         {loading ? (
@@ -22,7 +22,7 @@ export default ({ props, fedMeta, dao, loading }) => {
           <EmptyState />
         ) : (
           active.map((item, id) => {
-            return <Item key={id} {...item} fedMeta={fedMeta} />;
+            return <Item key={id} {...item} dao={dao} fedMeta={fedMeta} />;
           })
         )}
       </div>
@@ -32,7 +32,7 @@ export default ({ props, fedMeta, dao, loading }) => {
           <span className={styles.listFilterBar}>Executed votes ({executed.length})</span>
           {executed
             .map((item, id) => {
-              return <Item key={id} {...item} fedMeta={fedMeta} executed />;
+              return <Item key={id} {...item} dao={dao} fedMeta={fedMeta} executed />;
             })
             .reverse()}
         </div>
