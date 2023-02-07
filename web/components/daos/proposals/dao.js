@@ -3,18 +3,19 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useContractRead, useBlockNumber } from "wagmi";
 import NounishTokenABI from "../../../abi/nounish-token.json";
+import BuilderTokenABI from "../../../abi/builder-token.json";
 import { motion } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
-export default ({ dao, parentFedAddress }) => {
+export default ({ dao, fedMeta, parentFedAddress }) => {
   const { data: currentBlock } = useBlockNumber();
   const [delegatedAmount, setDelegatedAmount] = useState(ethers.BigNumber.from("0"));
 
   const { refetch } = useContractRead({
     addressOrName: dao.addresses.token,
-    contractInterface: NounishTokenABI,
-    functionName: "getPriorVotes",
-    args: [parentFedAddress, currentBlock - 1],
+    contractInterface: dao.builderDAO ? BuilderTokenABI : NounishTokenABI,
+    functionName: dao.builderDAO ? "getPastVotes" : "getPriorVotes",
+    args: dao.builderDAO ? [parentFedAddress, fedMeta.blockTimestamp - 1] : [parentFedAddress, currentBlock - 1],
     enabled: false,
   });
 

@@ -1,10 +1,9 @@
-import Link from "next/link";
 import styles from "./networkInfo.module.scss";
 import useDAOIndex from "../../../hooks/daoData";
 import DAO from "./dao";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 
-export default ({ dao }) => {
+export default ({ dao, fedMeta }) => {
   const daoIndex = useDAOIndex();
 
   const network = dao.network.map((d) => {
@@ -23,7 +22,7 @@ export default ({ dao }) => {
       <TooltipProvider>
         <ul className={styles.network}>
           {network.map((d, id) => {
-            return <DAO key={id} dao={d} parentFedAddress={dao.addresses.federation} />;
+            return <DAO key={id} dao={d} fedMeta={fedMeta} parentFedAddress={dao.addresses.federation} />;
           })}
         </ul>
       </TooltipProvider>

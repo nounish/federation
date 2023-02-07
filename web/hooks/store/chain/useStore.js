@@ -12,6 +12,7 @@ import {
   getFedProposalCreatedLogs,
   getFedProposal,
   getFedMeta,
+  getFedMultiTypeMeta,
 } from "../../../lib/store/chain/proposals";
 
 const isDev = process.env.NEXT_PUBLIC_ENV === "dev";
@@ -27,6 +28,7 @@ let store = (set, get) => {
 
       const block = await provider.getBlock("latest");
       const blockNumber = ethers.BigNumber.from(block.number);
+      const blockTimestamp = ethers.BigNumber.from(block.timestamp);
 
       // the parent dao
       const d = get()[key];
@@ -34,22 +36,40 @@ let store = (set, get) => {
       // get addresses for each external dao in the network
       const networkAddrs = d.network.map((n) => {
         const nd = DAOIndex[n.key];
-        return { dao: nd.addresses.dao, key: n.key };
+        return { dao: nd.addresses.dao, builderDAO: nd.builderDAO, key: n.key };
       });
 
-      const fedMeta = await getFedMeta(d.addresses.federation, provider);
+      let fedMeta;
+      if (!d.multiType) {
+        fedMeta = await getFedMeta(d.addresses.federation, provider);
+      } else {
+        fedMeta = await getFedMultiTypeMeta(d.addresses.federation, provider);
+      }
+      fedMeta.blockTimestamp = blockTimestamp.toNumber();
 
       // get all external proposals and group them by dao
       const propsByDAO = await Promise.all(
         networkAddrs.map(async (n) => {
-          const ePropCreatedLogs = await getDAOProposalCreatedLogs(n.dao, provider, DAOIndex[n.key].mainnetBirthBlock);
+          const ePropCreatedLogs = await getDAOProposalCreatedLogs(
+            n.dao,
+            n.builderDAO,
+            provider,
+            DAOIndex[n.key].mainnetBirthBlock
+          );
 
           // get external prop data and merge it with log data
           const eIDs = ePropCreatedLogs.proposals.map((p) => p.id);
-          const eProps = await getDAOProposals(eIDs, ePropCreatedLogs.dao, provider);
+          const eProps = await getDAOProposals(eIDs, n.builderDAO, ePropCreatedLogs.dao, provider);
 
           const eMergedProps = ePropCreatedLogs.proposals.map((p) => {
-            const found = eProps.proposals.find((f) => f.id.eq(p.id));
+            const found = eProps.proposals.find((f) => {
+              if (f.builderDAO) {
+                return f.id == p.id;
+              }
+
+              return f.id.eq(p.id);
+            });
+
             return { ...p, ...found };
           });
 
@@ -58,12 +78,12 @@ let store = (set, get) => {
             d.addresses.federation,
             provider,
             n.dao,
+            d.multiType,
             d.fedBirthBlock
           );
 
           const fIDs = fedPropCreatedLogs.map((p) => p.id);
-
-          const ps = await getFedProposals(fIDs, d.addresses.federation, provider);
+          const ps = await getFedProposals(fIDs, d.multiType, d.addresses.federation, provider);
 
           const fedMergedProps = fedPropCreatedLogs.map((p) => {
             const found = ps.find((f) => f.id.eq(p.id));
@@ -74,12 +94,18 @@ let store = (set, get) => {
           // general type used throughout the app
           const eKeyByPropID = eMergedProps.reduce((acc, prop) => {
             const { id } = prop;
+            if (d.multiType) {
+              const key = id.toNumber ? ethers.utils.hexZeroPad(ethers.BigNumber.from(id).toHexString(), 32) : id;
+              return { ...acc, [key]: prop };
+            }
+
             return { ...acc, [id.toNumber()]: prop };
           }, {});
 
           const fKeyByEPropID = fedMergedProps.reduce((acc, prop) => {
             const { ePropID } = prop;
-            return { ...acc, [ePropID.toNumber()]: prop };
+            const key = d.multiType ? ePropID : ePropID.toNumber();
+            return { ...acc, [key]: prop };
           }, {});
 
           const normalizedProps = Object.keys(eKeyByPropID)
@@ -87,17 +113,29 @@ let store = (set, get) => {
               const eProp = eKeyByPropID[k];
               const fProp = fKeyByEPropID[k];
 
+              // TODO :- ensure that fProp has correct proposed...
+
               // ignore inactive props in external dao but allow active props to
               // be proposed
+              if (!eProp.builderDAO) {
+                if (!fProp && eProp.endBlock.toNumber() <= blockNumber.toNumber()) {
+                  return null;
+                }
 
-              if (!fProp && eProp.endBlock.toNumber() <= blockNumber.toNumber()) {
+                // defeated props should not show up in the feed
+                if (fProp?.endBlock.lt(blockNumber) && !fProp?.executed) return null;
+
+                return new Proposal(n, blockNumber, eProp, fProp);
+              }
+
+              if (!fProp && eProp.voteEnd <= blockTimestamp.toNumber()) {
                 return null;
               }
 
               // defeated props should not show up in the feed
-              if (fProp?.endBlock.lt(blockNumber) && !fProp?.executed) return null;
+              if (fProp?.voteEnd < blockTimestamp && !fProp?.executed) return null;
 
-              return new Proposal(n, eProp, fProp);
+              return new Proposal(n, blockNumber, eProp, fProp);
             })
             .filter((f) => f);
 
@@ -120,7 +158,7 @@ let store = (set, get) => {
             return 1;
           }
 
-          if (a.externalEndBlock > b.externalEndBlock) {
+          if (a.externalEndTimestamp > b.externalEndTimestamp) {
             return 1;
           }
 
@@ -159,11 +197,12 @@ let store = (set, get) => {
 
       const proposals = get()[key].proposals || [];
       const fedAddress = get()[key].addresses.federation;
+      const multiType = get()[key].multiType;
 
       const refreshedProps = await Promise.all(
         proposals.map(async (p) => {
           if (p.eDAOKey === eDAOKey && p.eID === eID) {
-            const updated = await getFedProposal(pID, fedAddress, provider);
+            const updated = await getFedProposal(pID, multiType, fedAddress, provider);
             return p.update(updated);
           }
 

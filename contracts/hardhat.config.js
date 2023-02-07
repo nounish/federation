@@ -21,6 +21,9 @@ module.exports = {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts: [process.env.WALLET_PRIVATE_KEY || null].filter((f) => f),
     },
+    hardhat: {
+      allowUnlimitedContractSize: true,
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,

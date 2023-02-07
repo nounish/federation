@@ -1,4 +1,5 @@
 import styles from "./actions.module.scss";
+import { ethers } from "ethers";
 import { useState, useContext, useEffect } from "react";
 import { useContractWrite, usePrepareContractWrite, useAccount, useContractRead, useProvider } from "wagmi";
 import { ArrowUp, ArrowDown, XCircle, AlertCircle } from "react-feather";
@@ -7,6 +8,8 @@ import Popup from "../../transaction/popup";
 import ProposeForm from "../../transaction/proposeForm";
 import VoteForm from "../../transaction/voteForm";
 import FedDelegateABI from "../../../abi/f-delegate.json";
+import FedMultiTypeDelegateABI from "../../../abi/f-mt-delegate.json";
+import BuilderTokenABI from "../../../abi/builder-token.json";
 import NounishTokenABI from "../../../abi/nounish-token.json";
 import ParentDAOContext from "../../../hooks/context/parentDAO";
 import { Loader } from "../../icons";
@@ -14,13 +17,6 @@ import { parseError } from "../../../lib/strings";
 
 const Vote = (props) => {
   const account = useAccount();
-
-  const { data: votes, error } = useContractRead({
-    addressOrName: props.parentDAO.addresses.token,
-    contractInterface: NounishTokenABI,
-    functionName: "getPriorVotes",
-    args: [account.address, props.startBlock - 1],
-  });
 
   // get federation proposal receipts to check if this user has previously voted
   const { data: userVote, refetch } = useContractRead({
@@ -35,7 +31,7 @@ const Vote = (props) => {
     refetch();
   }, [props.forVotes, props.againstVotes, props.abstainVotes]);
 
-  const isDisabled = userVote?.hasVoted || votes?.toNumber() === 0 || !account.address;
+  const isDisabled = userVote?.hasVoted || !account.address;
 
   return (
     <div className={styles.details}>
@@ -101,9 +97,15 @@ const VoteAction = (props) => {
 const Propose = (props) => {
   const { config, error } = usePrepareContractWrite({
     addressOrName: props.parentDAO.addresses.federation,
-    contractInterface: FedDelegateABI,
+    contractInterface: props.parentDAO.builderDAO ? FedMultiTypeDelegateABI : FedDelegateABI,
     functionName: "propose",
-    args: [props.eDAO, props.eID],
+    args: props.parentDAO.builderDAO
+      ? [
+          props.eDAO,
+          typeof props.eID === "number" ? ethers.utils.hexZeroPad(ethers.utils.hexlify(props.eID), 32) : props.eID, // convert nounish dao prop ids to bytes32
+          typeof props.eID === "number" ? 0 : 1, // 0 = nounish dao, 1 = builder dao
+        ]
+      : [props.eDAO, props.eID],
   });
 
   const { writeAsync, isLoading } = useContractWrite(config);
@@ -155,7 +157,7 @@ const Propose = (props) => {
 const Execute = (props) => {
   const { config, error } = usePrepareContractWrite({
     addressOrName: props.parentDAO.addresses.federation,
-    contractInterface: FedDelegateABI,
+    contractInterface: props.parentDAO.multiType ? FedMultiTypeDelegateABI : FedDelegateABI,
     functionName: "execute",
     args: [props.id],
   });

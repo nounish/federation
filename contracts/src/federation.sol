@@ -9,7 +9,7 @@
 
 pragma solidity ^0.8.17;
 
-import {NounsDAOStorageV1} from "./external/nouns/governance/NounsDAOInterfaces.sol";
+import {NounsDAOStorageV1, NounsDAOStorageV2} from "./external/nouns/governance/NounsDAOInterfaces.sol";
 
 /// @notice All possible states that a proposal may be in
 enum ProposalState {
@@ -126,6 +126,30 @@ interface INounsDAOGovernance {
     function execute(uint256 proposalId) external;
 
     function state(uint256 proposalId) external view returns (NounsDAOStorageV1.ProposalState);
+
+    function quorumVotes() external view returns (uint256);
+
+    function proposalThreshold() external view returns (uint256);
+}
+
+interface INounsDAOGovernanceV2 {
+    function propose(
+        address[] memory targets,
+        uint256[] memory values,
+        string[] memory signatures,
+        bytes[] memory calldatas,
+        string memory description
+    ) external returns (uint256);
+
+    function castRefundableVote(uint256 proposalId, uint8 support) external;
+
+    function castVote(uint256 proposalId, uint8 support) external;
+
+    function queue(uint256 proposalId) external;
+
+    function execute(uint256 proposalId) external;
+
+    function state(uint256 proposalId) external view returns (NounsDAOStorageV2.ProposalState);
 
     function quorumVotes() external view returns (uint256);
 
