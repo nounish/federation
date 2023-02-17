@@ -4,13 +4,19 @@ export const Loader = () => {
   return <div className={`${styles.circleLoader}`}></div>;
 };
 
-export const RightArrow = ({ width = "15px" }) => {
+export const RightArrowSvg = ({width}) => {
+  return (
+    <svg viewBox="0 0 25 14" width={width} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 7H23.5M18 13L24 7L18 1" stroke="currentColor" strokeWidth="0.15rem"></path>
+    </svg>
+  )
+}
+
+export const RightArrow = () => {
   return (
     <>
       <div className="embed">
-        <svg viewBox="0 0 25 14" width={width} fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 7H23.5M18 13L24 7L18 1" stroke="currentColor" strokeWidth="0.15rem"></path>
-        </svg>
+        <RightArrowSvg width="15px" />
       </div>
       <style jsx>{`
         .embed::before {
