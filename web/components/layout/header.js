@@ -1,7 +1,7 @@
 import { GitHub, Twitter } from "../icons";
 import styles from "./header.module.scss";
 import Link from "next/link";
-import { RightArrow } from "../icons";
+import { RightArrowSvg } from "../icons";
 
 export default () => {
   return (
@@ -11,8 +11,8 @@ export default () => {
           Bid on Nouns DAO votes{"! "}
           <a href="https://bids.federation.wtf" target="_blank">
             Learn more{" "}
-            <span style={{ display: "inline flow-root list-item", marginLeft: "5px" }}>
-              <RightArrow />
+            <span style={{ marginLeft: "5px" }}>
+              <RightArrowSvg width="15px" />
             </span>
           </a>
         </span>
