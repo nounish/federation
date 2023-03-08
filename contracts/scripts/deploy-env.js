@@ -7,7 +7,7 @@ const randomTitle = require("random-title");
 async function main() {
   const n = 3;
   const { daos } = await setupLargeNetwork("", n);
-  const [owner, s1, s3, proposer] = await ethers.getSigners();
+  const [owner, s1, s3, proposer, , , bidDelegator] = await ethers.getSigners();
 
   const multiTypeNetwork = await setupMultiTypeNetwork(owner);
   daos.n4 = { nounish: multiTypeNetwork.n1, members: [owner] };
@@ -16,6 +16,15 @@ async function main() {
   // deploy multicall contract for local testing
   const Multicall = await ethers.getContractFactory("Multicall");
   const multicall = await Multicall.deploy();
+
+  // deploy vote bidding contract
+  const DelegateBid = await ethers.getContractFactory("DelegateBid");
+  const db = await DelegateBid.deploy(
+    150, // 30 min exec window
+    ethers.BigNumber.from("10000000000000000"), // 0.01 eth base tip
+    ethers.BigNumber.from("100000000000000000"), // 0.1 eth min bid
+    5 // bid inc %,
+  );
 
   // network daos
   const network = { n1: [], n2: [], n3: [], n4: [], n5: [] };
@@ -26,10 +35,13 @@ async function main() {
           for (let i = 0; i < 5; i++) {
             await daos[key].nounish.token.connect(s1).mint();
             await daos[key].nounish.token.connect(s3).mint();
+            await daos[key].nounish.token.connect(bidDelegator).mint();
           }
 
           await daos[key].nounish.token.connect(s3).delegate(daos.n4.nounish.federation.address);
           await daos[key].nounish.token.connect(s1).delegate(daos.n4.nounish.federation.address);
+          await daos[key].nounish.token.connect(bidDelegator).delegate(db.address);
+
           network.n4.push("n1");
 
           await daos[key].nounish.token.delegate(daos.n2.nounish.federation.address);
@@ -138,6 +150,9 @@ async function main() {
   console.log("Multicall:", multicall.address);
   console.log("");
   console.log("Federation:", federation);
+  console.log("");
+  console.log("DelegateBid:", db.address);
+  console.log("Delegated from address:", bidDelegator.address);
   console.log("");
 }
 
